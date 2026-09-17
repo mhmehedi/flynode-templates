@@ -1,0 +1,1010 @@
+{
+  "_readme": "Input for generate-templates.js. Every entry has confidence: 'high' | 'medium' | 'low' \u2014 low means the image name/tag or env var names are my best knowledge, not something I've run. Generate, then deploy + curl each one for real (same process WordPress/Ghost/Uptime Kuma went through) before treating it as production-ready. Apps needing 2+ services or an external dependency (S3, Redis+Postgres both, etc.) are deliberately left out \u2014 see EXCLUDED.md.",
+  "apps": [
+    {
+      "appName": "Directus",
+      "slug": "directus",
+      "category": "cms",
+      "dockerImage": "directus/directus:latest",
+      "internalPort": 8055,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "directus",
+        "username": "directus",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "DIRECTUS_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "KEY": "${DIRECTUS_KEY}",
+        "SECRET": "${DIRECTUS_SECRET}",
+        "DB_CLIENT": "pg",
+        "DB_HOST": "db",
+        "DB_PORT": "5432",
+        "DB_DATABASE": "directus",
+        "DB_USER": "directus",
+        "DB_PASSWORD": "${DIRECTUS_DB_PASSWORD}",
+        "ADMIN_EMAIL": "admin@flynode.io",
+        "ADMIN_PASSWORD": "${DIRECTUS_ADMIN_PASSWORD}",
+        "PUBLIC_URL": "${DIRECTUS_URL}"
+      },
+      "secretEnvKeys": [
+        "DIRECTUS_KEY",
+        "DIRECTUS_SECRET",
+        "DIRECTUS_DB_PASSWORD",
+        "DIRECTUS_ADMIN_PASSWORD"
+      ],
+      "urlEnvKey": "DIRECTUS_URL",
+      "volumes": [
+        {
+          "name": "directus-uploads",
+          "path": "/directus/uploads"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Craft CMS",
+      "slug": "craft-cms",
+      "category": "cms",
+      "dockerImage": "craftcms/craftcms:latest",
+      "internalPort": 8080,
+      "requiresDb": true,
+      "db": {
+        "engine": "mariadb",
+        "databaseName": "craft",
+        "username": "craft",
+        "envVarNames": {
+          "rootPassword": "MARIADB_ROOT_PASSWORD",
+          "database": "MARIADB_DATABASE",
+          "user": "MARIADB_USER",
+          "password": "MARIADB_PASSWORD"
+        },
+        "passwordSecret": "CRAFT_DB_PASSWORD",
+        "rootPasswordSecret": "MARIADB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "CRAFT_DB_DRIVER": "mysql",
+        "CRAFT_DB_SERVER": "db",
+        "CRAFT_DB_DATABASE": "craft",
+        "CRAFT_DB_USER": "craft",
+        "CRAFT_DB_PASSWORD": "${CRAFT_DB_PASSWORD}",
+        "CRAFT_SECURITY_KEY": "${CRAFT_SECURITY_KEY}"
+      },
+      "secretEnvKeys": [
+        "MARIADB_ROOT_PASSWORD",
+        "CRAFT_DB_PASSWORD",
+        "CRAFT_SECURITY_KEY"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "craft-storage",
+          "path": "/app/storage"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "Odoo",
+      "slug": "odoo",
+      "category": "cms",
+      "dockerImage": "odoo:17",
+      "internalPort": 8069,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "postgres",
+        "username": "odoo",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "ODOO_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "HOST": "db",
+        "USER": "odoo",
+        "PASSWORD": "${ODOO_DB_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "ODOO_DB_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "odoo-data",
+          "path": "/var/lib/odoo"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Bagisto",
+      "slug": "bagisto",
+      "category": "cms",
+      "dockerImage": "bagisto/bagisto:latest",
+      "internalPort": 8000,
+      "requiresDb": true,
+      "db": {
+        "engine": "mysql",
+        "databaseName": "bagisto",
+        "username": "bagisto",
+        "envVarNames": {
+          "rootPassword": "MYSQL_ROOT_PASSWORD",
+          "database": "MYSQL_DATABASE",
+          "user": "MYSQL_USER",
+          "password": "MYSQL_PASSWORD"
+        },
+        "passwordSecret": "BAGISTO_DB_PASSWORD",
+        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "APP_KEY": "${BAGISTO_APP_KEY}",
+        "DB_HOST": "db",
+        "DB_DATABASE": "bagisto",
+        "DB_USERNAME": "bagisto",
+        "DB_PASSWORD": "${BAGISTO_DB_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "MYSQL_ROOT_PASSWORD",
+        "BAGISTO_APP_KEY",
+        "BAGISTO_DB_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "bagisto-storage",
+          "path": "/var/www/html/storage"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "TypeMill",
+      "slug": "typemill",
+      "category": "cms",
+      "dockerImage": "typemill/typemill:latest",
+      "internalPort": 80,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {},
+      "secretEnvKeys": [],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "typemill-system",
+          "path": "/var/www/html/system"
+        },
+        {
+          "name": "typemill-media",
+          "path": "/var/www/html/media"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "n8n",
+      "slug": "n8n",
+      "category": "automation",
+      "dockerImage": "n8nio/n8n:latest",
+      "internalPort": 5678,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "n8n",
+        "username": "n8n",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "N8N_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "DB_TYPE": "postgresdb",
+        "DB_POSTGRESDB_HOST": "db",
+        "DB_POSTGRESDB_DATABASE": "n8n",
+        "DB_POSTGRESDB_USER": "n8n",
+        "DB_POSTGRESDB_PASSWORD": "${N8N_DB_PASSWORD}",
+        "N8N_ENCRYPTION_KEY": "${N8N_ENCRYPTION_KEY}",
+        "N8N_EDITOR_BASE_URL": "${N8N_URL}",
+        "N8N_WEBHOOK_URL": "${N8N_URL}"
+      },
+      "secretEnvKeys": [
+        "N8N_DB_PASSWORD",
+        "N8N_ENCRYPTION_KEY"
+      ],
+      "urlEnvKey": "N8N_URL",
+      "volumes": [
+        {
+          "name": "n8n-data",
+          "path": "/home/node/.n8n"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Flowise",
+      "slug": "flowise",
+      "category": "automation",
+      "dockerImage": "flowiseai/flowise:3.1.3",
+      "internalPort": 3000,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {
+        "FLOWISE_USERNAME": "admin",
+        "FLOWISE_PASSWORD": "${FLOWISE_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "FLOWISE_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "flowise-data",
+          "path": "/root/.flowise"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Langflow",
+      "slug": "langflow",
+      "category": "automation",
+      "dockerImage": "langflowai/langflow:latest",
+      "internalPort": 7860,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {
+        "LANGFLOW_SECRET_KEY": "${LANGFLOW_SECRET_KEY}",
+        "LANGFLOW_SUPERUSER": "admin",
+        "LANGFLOW_SUPERUSER_PASSWORD": "${LANGFLOW_SUPERUSER_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "LANGFLOW_SECRET_KEY",
+        "LANGFLOW_SUPERUSER_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "langflow-data",
+          "path": "/app/langflow"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Node-RED",
+      "slug": "node-red",
+      "category": "automation",
+      "dockerImage": "nodered/node-red:latest",
+      "internalPort": 1880,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {},
+      "secretEnvKeys": [],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "node-red-data",
+          "path": "/data"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Huginn",
+      "slug": "huginn",
+      "category": "automation",
+      "dockerImage": "huginn/huginn:latest",
+      "internalPort": 3000,
+      "requiresDb": true,
+      "db": {
+        "engine": "mariadb",
+        "databaseName": "huginn",
+        "username": "huginn",
+        "envVarNames": {
+          "rootPassword": "MARIADB_ROOT_PASSWORD",
+          "database": "MARIADB_DATABASE",
+          "user": "MARIADB_USER",
+          "password": "MARIADB_PASSWORD"
+        },
+        "passwordSecret": "HUGINN_DB_PASSWORD",
+        "rootPasswordSecret": "MARIADB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "DATABASE_ADAPTER": "mysql2",
+        "DATABASE_HOST": "db",
+        "DATABASE_NAME": "huginn",
+        "DATABASE_USERNAME": "huginn",
+        "DATABASE_PASSWORD": "${HUGINN_DB_PASSWORD}",
+        "APP_SECRET_TOKEN": "${HUGINN_APP_SECRET_TOKEN}"
+      },
+      "secretEnvKeys": [
+        "MARIADB_ROOT_PASSWORD",
+        "HUGINN_DB_PASSWORD",
+        "HUGINN_APP_SECRET_TOKEN"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "huginn-data",
+          "path": "/var/lib/huginn"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Umami",
+      "slug": "umami",
+      "category": "analytics",
+      "dockerImage": "ghcr.io/umami-software/umami:postgresql-latest",
+      "internalPort": 3000,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "umami",
+        "username": "umami",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "UMAMI_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "DATABASE_URL": "postgresql://umami:${UMAMI_DB_PASSWORD}@db:5432/umami",
+        "APP_SECRET": "${UMAMI_APP_SECRET}"
+      },
+      "secretEnvKeys": [
+        "UMAMI_DB_PASSWORD",
+        "UMAMI_APP_SECRET"
+      ],
+      "urlEnvKey": null,
+      "volumes": [],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Matomo",
+      "slug": "matomo",
+      "category": "analytics",
+      "dockerImage": "matomo:latest",
+      "internalPort": 80,
+      "requiresDb": true,
+      "db": {
+        "engine": "mariadb",
+        "databaseName": "matomo",
+        "username": "matomo",
+        "envVarNames": {
+          "rootPassword": "MARIADB_ROOT_PASSWORD",
+          "database": "MARIADB_DATABASE",
+          "user": "MARIADB_USER",
+          "password": "MARIADB_PASSWORD"
+        },
+        "passwordSecret": "MATOMO_DB_PASSWORD",
+        "rootPasswordSecret": "MARIADB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "MATOMO_DATABASE_HOST": "db",
+        "MATOMO_DATABASE_USERNAME": "matomo",
+        "MATOMO_DATABASE_PASSWORD": "${MATOMO_DB_PASSWORD}",
+        "MATOMO_DATABASE_DBNAME": "matomo"
+      },
+      "secretEnvKeys": [
+        "MARIADB_ROOT_PASSWORD",
+        "MATOMO_DB_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "matomo-data",
+          "path": "/var/www/html"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Fathom Lite",
+      "slug": "fathom",
+      "category": "analytics",
+      "dockerImage": "usefathom/fathom:latest",
+      "internalPort": 8080,
+      "requiresDb": true,
+      "db": {
+        "engine": "mysql",
+        "databaseName": "fathom",
+        "username": "fathom",
+        "envVarNames": {
+          "rootPassword": "MYSQL_ROOT_PASSWORD",
+          "database": "MYSQL_DATABASE",
+          "user": "MYSQL_USER",
+          "password": "MYSQL_PASSWORD"
+        },
+        "passwordSecret": "FATHOM_DB_PASSWORD",
+        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "FATHOM_DATABASE_DRIVER": "mysql",
+        "FATHOM_DATABASE_HOST": "db",
+        "FATHOM_DATABASE_NAME": "fathom",
+        "FATHOM_DATABASE_USER": "fathom",
+        "FATHOM_DATABASE_PASSWORD": "${FATHOM_DB_PASSWORD}",
+        "FATHOM_SECRET": "${FATHOM_SECRET}"
+      },
+      "secretEnvKeys": [
+        "MYSQL_ROOT_PASSWORD",
+        "FATHOM_DB_PASSWORD",
+        "FATHOM_SECRET"
+      ],
+      "urlEnvKey": null,
+      "volumes": [],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "Shlink",
+      "slug": "shlink",
+      "category": "analytics",
+      "dockerImage": "shlinkio/shlink:latest",
+      "internalPort": 8080,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {
+        "DEFAULT_DOMAIN": "${SHLINK_URL_HOST}",
+        "IS_HTTPS_ENABLED": "true"
+      },
+      "secretEnvKeys": [],
+      "urlEnvKey": "SHLINK_URL_HOST",
+      "volumes": [
+        {
+          "name": "shlink-data",
+          "path": "/etc/shlink/data"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified",
+      "_note": "urlHostEnvKey in the real deploy engine (app-templates.ts), not urlEnvKey \u2014 needs a bare hostname, not a full URL."
+    },
+    {
+      "appName": "Kutt",
+      "slug": "kutt",
+      "category": "analytics",
+      "dockerImage": "kutt/kutt:latest",
+      "internalPort": 3000,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "kutt",
+        "username": "kutt",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "KUTT_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "DB_HOST": "db",
+        "DB_NAME": "kutt",
+        "DB_USER": "kutt",
+        "DB_PASSWORD": "${KUTT_DB_PASSWORD}",
+        "JWT_SECRET": "${KUTT_JWT_SECRET}",
+        "SITE_NAME": "Kutt"
+      },
+      "secretEnvKeys": [
+        "KUTT_DB_PASSWORD",
+        "KUTT_JWT_SECRET"
+      ],
+      "urlEnvKey": null,
+      "volumes": [],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "FreeScout",
+      "slug": "freescout",
+      "category": "crm-support",
+      "dockerImage": "tiredofit/freescout:latest",
+      "internalPort": 80,
+      "requiresDb": true,
+      "db": {
+        "engine": "mysql",
+        "databaseName": "freescout",
+        "username": "freescout",
+        "envVarNames": {
+          "rootPassword": "MYSQL_ROOT_PASSWORD",
+          "database": "MYSQL_DATABASE",
+          "user": "MYSQL_USER",
+          "password": "MYSQL_PASSWORD"
+        },
+        "passwordSecret": "FREESCOUT_DB_PASSWORD",
+        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "DB_HOST": "db",
+        "DB_NAME": "freescout",
+        "DB_USER": "freescout",
+        "DB_PASSWORD": "${FREESCOUT_DB_PASSWORD}",
+        "APP_KEY": "${FREESCOUT_APP_KEY}"
+      },
+      "secretEnvKeys": [
+        "MYSQL_ROOT_PASSWORD",
+        "FREESCOUT_DB_PASSWORD",
+        "FREESCOUT_APP_KEY"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "freescout-data",
+          "path": "/data"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "Papercups",
+      "slug": "papercups",
+      "category": "crm-support",
+      "dockerImage": "papercups/papercups:latest",
+      "internalPort": 4000,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "papercups",
+        "username": "papercups",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "PAPERCUPS_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "DATABASE_URL": "postgresql://papercups:${PAPERCUPS_DB_PASSWORD}@db:5432/papercups",
+        "SECRET_KEY_BASE": "${PAPERCUPS_SECRET_KEY_BASE}"
+      },
+      "secretEnvKeys": [
+        "PAPERCUPS_DB_PASSWORD",
+        "PAPERCUPS_SECRET_KEY_BASE"
+      ],
+      "urlEnvKey": null,
+      "volumes": [],
+      "defaultEnv": {},
+      "confidence": "medium"
+    },
+    {
+      "appName": "Invoice Ninja",
+      "slug": "invoiceninja",
+      "category": "crm-support",
+      "dockerImage": "invoiceninja/invoiceninja:latest",
+      "internalPort": 80,
+      "requiresDb": true,
+      "db": {
+        "engine": "mysql",
+        "databaseName": "ninja",
+        "username": "ninja",
+        "envVarNames": {
+          "rootPassword": "MYSQL_ROOT_PASSWORD",
+          "database": "MYSQL_DATABASE",
+          "user": "MYSQL_USER",
+          "password": "MYSQL_PASSWORD"
+        },
+        "passwordSecret": "INVOICENINJA_DB_PASSWORD",
+        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "APP_KEY": "${INVOICENINJA_APP_KEY}",
+        "DB_HOST": "db",
+        "DB_DATABASE": "ninja",
+        "DB_USERNAME": "ninja",
+        "DB_PASSWORD": "${INVOICENINJA_DB_PASSWORD}",
+        "APP_URL": "${INVOICENINJA_URL}"
+      },
+      "secretEnvKeys": [
+        "MYSQL_ROOT_PASSWORD",
+        "INVOICENINJA_APP_KEY",
+        "INVOICENINJA_DB_PASSWORD"
+      ],
+      "urlEnvKey": "INVOICENINJA_URL",
+      "volumes": [
+        {
+          "name": "invoiceninja-data",
+          "path": "/var/www/app/storage"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "medium"
+    },
+    {
+      "appName": "Crater",
+      "slug": "crater",
+      "category": "crm-support",
+      "dockerImage": "wrkflow/crater:latest",
+      "internalPort": 80,
+      "requiresDb": true,
+      "db": {
+        "engine": "mysql",
+        "databaseName": "crater",
+        "username": "crater",
+        "envVarNames": {
+          "rootPassword": "MYSQL_ROOT_PASSWORD",
+          "database": "MYSQL_DATABASE",
+          "user": "MYSQL_USER",
+          "password": "MYSQL_PASSWORD"
+        },
+        "passwordSecret": "CRATER_DB_PASSWORD",
+        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "APP_KEY": "${CRATER_APP_KEY}",
+        "DB_HOST": "db",
+        "DB_DATABASE": "crater",
+        "DB_USERNAME": "crater",
+        "DB_PASSWORD": "${CRATER_DB_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "MYSQL_ROOT_PASSWORD",
+        "CRATER_APP_KEY",
+        "CRATER_DB_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "crater-storage",
+          "path": "/var/www/html/storage"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "Mautic",
+      "slug": "mautic",
+      "category": "crm-support",
+      "dockerImage": "mautic/mautic:latest",
+      "internalPort": 80,
+      "requiresDb": true,
+      "db": {
+        "engine": "mariadb",
+        "databaseName": "mautic",
+        "username": "mautic",
+        "envVarNames": {
+          "rootPassword": "MARIADB_ROOT_PASSWORD",
+          "database": "MARIADB_DATABASE",
+          "user": "MARIADB_USER",
+          "password": "MARIADB_PASSWORD"
+        },
+        "passwordSecret": "MAUTIC_DB_PASSWORD",
+        "rootPasswordSecret": "MARIADB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "MAUTIC_DB_HOST": "db",
+        "MAUTIC_DB_NAME": "mautic",
+        "MAUTIC_DB_USER": "mautic",
+        "MAUTIC_DB_PASSWORD": "${MAUTIC_DB_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "MARIADB_ROOT_PASSWORD",
+        "MAUTIC_DB_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "mautic-data",
+          "path": "/var/www/html"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "Listmonk",
+      "slug": "listmonk",
+      "category": "crm-support",
+      "dockerImage": "listmonk/listmonk:latest",
+      "internalPort": 9000,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "listmonk",
+        "username": "listmonk",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "LISTMONK_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "LISTMONK_app__address": "0.0.0.0:9000",
+        "LISTMONK_db__host": "db",
+        "LISTMONK_db__user": "listmonk",
+        "LISTMONK_db__password": "${LISTMONK_DB_PASSWORD}",
+        "LISTMONK_db__database": "listmonk"
+      },
+      "secretEnvKeys": [
+        "LISTMONK_DB_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [],
+      "defaultEnv": {},
+      "confidence": "medium",
+      "_note": "Listmonk needs a one-time `--install` run against the DB on first boot \u2014 env vars alone won't create its schema. Needs a startup-command tweak, not just env injection."
+    },
+    {
+      "appName": "SuiteCRM",
+      "slug": "suitecrm",
+      "category": "crm-support",
+      "dockerImage": "bitnami/suitecrm:latest",
+      "internalPort": 8080,
+      "requiresDb": true,
+      "db": {
+        "engine": "mariadb",
+        "databaseName": "suitecrm",
+        "username": "suitecrm",
+        "envVarNames": {
+          "rootPassword": "MARIADB_ROOT_PASSWORD",
+          "database": "MARIADB_DATABASE",
+          "user": "MARIADB_USER",
+          "password": "MARIADB_PASSWORD"
+        },
+        "passwordSecret": "SUITECRM_DB_PASSWORD",
+        "rootPasswordSecret": "MARIADB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "SUITECRM_DATABASE_HOST": "db",
+        "SUITECRM_DATABASE_NAME": "suitecrm",
+        "SUITECRM_DATABASE_USER": "suitecrm",
+        "SUITECRM_DATABASE_PASSWORD": "${SUITECRM_DB_PASSWORD}",
+        "SUITECRM_USERNAME": "admin",
+        "SUITECRM_PASSWORD": "${SUITECRM_ADMIN_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "MARIADB_ROOT_PASSWORD",
+        "SUITECRM_DB_PASSWORD",
+        "SUITECRM_ADMIN_PASSWORD"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "suitecrm-data",
+          "path": "/bitnami/suitecrm"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "medium"
+    },
+    {
+      "appName": "PocketBase",
+      "slug": "pocketbase",
+      "category": "baas-api",
+      "dockerImage": "ghcr.io/muchobien/pocketbase:latest",
+      "internalPort": 8090,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {},
+      "secretEnvKeys": [],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "pocketbase-data",
+          "path": "/pb_data"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    },
+    {
+      "appName": "NocoDB",
+      "slug": "nocodb",
+      "category": "baas-api",
+      "dockerImage": "nocodb/nocodb:latest",
+      "internalPort": 8080,
+      "requiresDb": true,
+      "db": {
+        "engine": "postgres",
+        "databaseName": "nocodb",
+        "username": "nocodb",
+        "envVarNames": {
+          "user": "POSTGRES_USER",
+          "password": "POSTGRES_PASSWORD",
+          "database": "POSTGRES_DB"
+        },
+        "passwordSecret": "NOCODB_DB_PASSWORD",
+        "rootPasswordSecret": null
+      },
+      "appEnv": {
+        "NC_DB": "pg://db:5432?u=nocodb&p=${NOCODB_DB_PASSWORD}&d=nocodb",
+        "NC_AUTH_JWT_SECRET": "${NOCODB_JWT_SECRET}"
+      },
+      "secretEnvKeys": [
+        "NOCODB_DB_PASSWORD",
+        "NOCODB_JWT_SECRET"
+      ],
+      "urlEnvKey": null,
+      "volumes": [
+        {
+          "name": "nocodb-data",
+          "path": "/usr/app/data"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "medium"
+    },
+    {
+      "appName": "Baserow",
+      "slug": "baserow",
+      "category": "baas-api",
+      "dockerImage": "baserow/baserow:latest",
+      "internalPort": 80,
+      "requiresDb": false,
+      "db": null,
+      "appEnv": {
+        "BASEROW_PUBLIC_URL": "${BASEROW_URL}",
+        "SECRET_KEY": "${BASEROW_SECRET_KEY}"
+      },
+      "secretEnvKeys": [
+        "BASEROW_SECRET_KEY"
+      ],
+      "urlEnvKey": "BASEROW_URL",
+      "volumes": [
+        {
+          "name": "baserow-data",
+          "path": "/baserow/data"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "medium",
+      "_note": "Baserow's all-in-one image bundles its own internal Postgres+Redis \u2014 that's WHY requiresDb is false here, not because it doesn't need a database."
+    },
+    {
+      "appName": "Flarum",
+      "slug": "flarum",
+      "category": "community",
+      "dockerImage": "mondedie/flarum:latest",
+      "internalPort": 8888,
+      "requiresDb": true,
+      "db": {
+        "engine": "mysql",
+        "databaseName": "flarum",
+        "username": "flarum",
+        "envVarNames": {
+          "rootPassword": "MYSQL_ROOT_PASSWORD",
+          "database": "MYSQL_DATABASE",
+          "user": "MYSQL_USER",
+          "password": "MYSQL_PASSWORD"
+        },
+        "passwordSecret": "FLARUM_DB_PASSWORD",
+        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "FLARUM_URL": "${FLARUM_URL}",
+        "DB_HOST": "db",
+        "DB_NAME": "flarum",
+        "DB_USER": "flarum",
+        "DB_PASS": "${FLARUM_DB_PASSWORD}"
+      },
+      "secretEnvKeys": [
+        "MYSQL_ROOT_PASSWORD",
+        "FLARUM_DB_PASSWORD"
+      ],
+      "urlEnvKey": "FLARUM_URL",
+      "volumes": [
+        {
+          "name": "flarum-assets",
+          "path": "/flarum/app/public/assets"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "low"
+    },
+    {
+      "appName": "NodeBB",
+      "slug": "nodebb",
+      "category": "community",
+      "dockerImage": "nodebb/docker:latest",
+      "internalPort": 4567,
+      "requiresDb": true,
+      "db": {
+        "engine": "mongo",
+        "databaseName": "nodebb",
+        "username": "nodebb",
+        "envVarNames": {
+          "rootPassword": "MONGO_INITDB_ROOT_PASSWORD",
+          "rootUsername": "MONGO_INITDB_ROOT_USERNAME"
+        },
+        "passwordSecret": null,
+        "rootPasswordSecret": "MONGO_INITDB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "NODEBB_URL": "${NODEBB_URL}",
+        "NODEBB_DB": "mongo",
+        "NODEBB_DB_HOST": "db",
+        "NODEBB_DB_NAME": "nodebb",
+        "NODEBB_DB_PASSWORD": "${MONGO_INITDB_ROOT_PASSWORD}",
+        "NODEBB_DB_USER": "root"
+      },
+      "secretEnvKeys": [
+        "MONGO_INITDB_ROOT_PASSWORD"
+      ],
+      "urlEnvKey": "NODEBB_URL",
+      "volumes": [
+        {
+          "name": "nodebb-data",
+          "path": "/usr/src/app/public/uploads"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "medium"
+    },
+    {
+      "appName": "BookStack",
+      "slug": "bookstack",
+      "category": "community",
+      "dockerImage": "lscr.io/linuxserver/bookstack:latest",
+      "internalPort": 80,
+      "requiresDb": true,
+      "db": {
+        "engine": "mariadb",
+        "databaseName": "bookstack",
+        "username": "bookstack",
+        "envVarNames": {
+          "rootPassword": "MARIADB_ROOT_PASSWORD",
+          "database": "MARIADB_DATABASE",
+          "user": "MARIADB_USER",
+          "password": "MARIADB_PASSWORD"
+        },
+        "passwordSecret": "BOOKSTACK_DB_PASSWORD",
+        "rootPasswordSecret": "MARIADB_ROOT_PASSWORD"
+      },
+      "appEnv": {
+        "APP_URL": "${BOOKSTACK_URL}",
+        "DB_HOST": "db",
+        "DB_DATABASE": "bookstack",
+        "DB_USERNAME": "bookstack",
+        "DB_PASSWORD": "${BOOKSTACK_DB_PASSWORD}",
+        "APP_KEY": "${BOOKSTACK_APP_KEY}"
+      },
+      "secretEnvKeys": [
+        "MARIADB_ROOT_PASSWORD",
+        "BOOKSTACK_DB_PASSWORD",
+        "BOOKSTACK_APP_KEY"
+      ],
+      "urlEnvKey": "BOOKSTACK_URL",
+      "volumes": [
+        {
+          "name": "bookstack-data",
+          "path": "/config"
+        }
+      ],
+      "defaultEnv": {},
+      "confidence": "verified"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "_readme": "Apps that don't fit the generic \"one app image + optionally one database\" shape generate-templates.js handles. Each needs a hand-authored docker-compose.yaml, verified the same real-deploy way as every other template — see the main README. isBespoke: true is a marker for tooling/UI that lists templates, not a schema generate-templates.js reads.",
+  "apps": [
+    { "appName": "Supabase", "slug": "supabase", "category": "baas-api", "isBespoke": true, "reason": "~10 containers (Postgres, GoTrue, PostgREST, Realtime, Storage, Kong, Studio, ...)." },
+    { "appName": "Appwrite", "slug": "appwrite", "category": "baas-api", "isBespoke": true, "reason": "Multi-container (MariaDB, Redis, InfluxDB, Telegraf, ...) plus a CLI init step." },
+    { "appName": "Discourse", "slug": "discourse", "category": "community", "isBespoke": true, "reason": "No official plain docker-compose support — ships its own launcher/bootstrap tooling instead." },
+    { "appName": "PostHog", "slug": "posthog", "category": "analytics", "isBespoke": true, "reason": "Web, worker, ClickHouse, Kafka, Redis, and Postgres — not a single app+db pair." },
+    { "appName": "Typebot", "slug": "typebot", "category": "crm-support", "isBespoke": true, "reason": "Two public services (builder + viewer) sharing one Postgres." },
+    { "appName": "Medusa", "slug": "medusa", "category": "cms", "isBespoke": true, "reason": "Storefront and admin are two separate public services." },
+    { "appName": "Parse Server", "slug": "parse-server", "category": "baas-api", "isBespoke": true, "reason": "Server plus an optional Dashboard — two public services." },
+    { "appName": "Payload CMS", "slug": "payload-cms", "category": "cms", "isBespoke": true, "reason": "Framework you build your own project with — no generic pre-built image exists." },
+    { "appName": "Plausible", "slug": "plausible", "category": "analytics", "isBespoke": true, "reason": "Needs Postgres AND ClickHouse, not a single optional database." },
+    { "appName": "Chatwoot", "slug": "chatwoot", "category": "crm-support", "isBespoke": true, "reason": "Needs Postgres AND Redis; the generator only supports one backing service." },
+    { "appName": "Outline", "slug": "outline", "category": "community", "isBespoke": true, "reason": "Needs Postgres AND Redis, and hard-requires S3-compatible storage — no local-disk mode." },
+    { "appName": "Strapi", "slug": "strapi", "category": "cms", "isBespoke": true, "reason": "No generic docker image exists at all (strapi/strapi was archived on Docker Hub in 2024) — same class of problem as Payload CMS, not fixable with a compose file." },
+    { "appName": "Activepieces", "slug": "activepieces", "category": "automation", "isBespoke": true, "reason": "Needs Postgres AND Redis; confirmed via a real deploy crash (createStandaloneRedisConnection failed with no Redis configured)." }
+  ]
+}
