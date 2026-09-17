@@ -706,7 +706,9 @@
         "LISTMONK_db__password": "${LISTMONK_DB_PASSWORD}",
         "LISTMONK_db__database": "listmonk",
         "LISTMONK_ADMIN_USER": "admin",
-        "LISTMONK_ADMIN_PASSWORD": "${LISTMONK_ADMIN_PASSWORD}"
+        "LISTMONK_ADMIN_PASSWORD": "${LISTMONK_ADMIN_PASSWORD}",
+        "LISTMONK_db__port": "5432",
+        "LISTMONK_db__ssl_mode": "disable"
       },
       "secretEnvKeys": [
         "LISTMONK_DB_PASSWORD",
