@@ -4,6 +4,8 @@ services:
     environment:
       DEFAULT_DOMAIN: '${SHLINK_URL_HOST}'
       IS_HTTPS_ENABLED: 'true'
+    expose:
+      - '8080'
     volumes:
       - shlink-data:/etc/shlink/data
 

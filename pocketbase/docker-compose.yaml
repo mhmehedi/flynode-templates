@@ -3,6 +3,8 @@ services:
     image: 'ghcr.io/muchobien/pocketbase:latest'
     environment:
       {}
+    expose:
+      - '8090'
     volumes:
       - pocketbase-data:/pb_data
 

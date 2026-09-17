@@ -7,6 +7,8 @@ services:
       DB_USER: 'freescout'
       DB_PASSWORD: '${FREESCOUT_DB_PASSWORD}'
       APP_KEY: '${FREESCOUT_APP_KEY}'
+    expose:
+      - '80'
     volumes:
       - freescout-data:/data
 

@@ -9,6 +9,8 @@ services:
       AP_POSTGRES_USERNAME: 'activepieces'
       AP_POSTGRES_PASSWORD: '${AP_DB_PASSWORD}'
       AP_FRONTEND_URL: '${ACTIVEPIECES_URL}'
+    expose:
+      - '80'
     volumes:
       - activepieces-cache:/usr/src/app/cache
 

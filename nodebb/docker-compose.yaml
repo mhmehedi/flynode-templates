@@ -8,6 +8,8 @@ services:
       NODEBB_DB_NAME: 'nodebb'
       NODEBB_DB_PASSWORD: '${MONGO_INITDB_ROOT_PASSWORD}'
       NODEBB_DB_USER: 'root'
+    expose:
+      - '4567'
     volumes:
       - nodebb-data:/usr/src/app/public/uploads
 

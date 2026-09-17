@@ -4,6 +4,8 @@ services:
     environment:
       FLOWISE_USERNAME: 'admin'
       FLOWISE_PASSWORD: '${FLOWISE_PASSWORD}'
+    expose:
+      - '3000'
     volumes:
       - flowise-data:/root/.flowise
 

@@ -8,6 +8,8 @@ services:
       CRAFT_DB_USER: 'craft'
       CRAFT_DB_PASSWORD: '${CRAFT_DB_PASSWORD}'
       CRAFT_SECURITY_KEY: '${CRAFT_SECURITY_KEY}'
+    expose:
+      - '8080'
     volumes:
       - craft-storage:/app/storage
 

@@ -5,6 +5,8 @@ services:
       HOST: 'db'
       USER: 'odoo'
       PASSWORD: '${ODOO_DB_PASSWORD}'
+    expose:
+      - '8069'
     volumes:
       - odoo-data:/var/lib/odoo
 

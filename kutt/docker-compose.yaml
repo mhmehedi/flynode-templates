@@ -8,6 +8,8 @@ services:
       DB_PASSWORD: '${KUTT_DB_PASSWORD}'
       JWT_SECRET: '${KUTT_JWT_SECRET}'
       SITE_NAME: 'Kutt'
+    expose:
+      - '3000'
     volumes:
       []
 

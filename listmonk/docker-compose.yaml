@@ -7,6 +7,8 @@ services:
       LISTMONK_db__user: 'listmonk'
       LISTMONK_db__password: '${LISTMONK_DB_PASSWORD}'
       LISTMONK_db__database: 'listmonk'
+    expose:
+      - '9000'
     volumes:
       []
 

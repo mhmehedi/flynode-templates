@@ -4,6 +4,8 @@ services:
     environment:
       DATABASE_URL: 'postgresql://umami:${UMAMI_DB_PASSWORD}@db:5432/umami'
       APP_SECRET: '${UMAMI_APP_SECRET}'
+    expose:
+      - '3000'
     volumes:
       []
 

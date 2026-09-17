@@ -4,6 +4,8 @@ services:
     environment:
       NC_DB: 'pg://db:5432?u=nocodb&p=${NOCODB_DB_PASSWORD}&d=nocodb'
       NC_AUTH_JWT_SECRET: '${NOCODB_JWT_SECRET}'
+    expose:
+      - '8080'
     volumes:
       - nocodb-data:/usr/app/data
 

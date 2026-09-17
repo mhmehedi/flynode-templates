@@ -12,6 +12,8 @@ services:
       API_TOKEN_SALT: '${STRAPI_API_TOKEN_SALT}'
       ADMIN_JWT_SECRET: '${STRAPI_ADMIN_JWT_SECRET}'
       JWT_SECRET: '${STRAPI_JWT_SECRET}'
+    expose:
+      - '1337'
     volumes:
       - strapi-data:/opt/app/data
 

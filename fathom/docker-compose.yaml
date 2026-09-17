@@ -8,6 +8,8 @@ services:
       FATHOM_DATABASE_USER: 'fathom'
       FATHOM_DATABASE_PASSWORD: '${FATHOM_DB_PASSWORD}'
       FATHOM_SECRET: '${FATHOM_SECRET}'
+    expose:
+      - '8080'
     volumes:
       []
 

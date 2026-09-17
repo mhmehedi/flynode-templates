@@ -4,6 +4,8 @@ services:
     environment:
       BASEROW_PUBLIC_URL: '${BASEROW_URL}'
       SECRET_KEY: '${BASEROW_SECRET_KEY}'
+    expose:
+      - '80'
     volumes:
       - baserow-data:/baserow/data
 

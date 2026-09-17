@@ -7,6 +7,8 @@ services:
       DB_DATABASE: 'crater'
       DB_USERNAME: 'crater'
       DB_PASSWORD: '${CRATER_DB_PASSWORD}'
+    expose:
+      - '80'
     volumes:
       - crater-storage:/var/www/html/storage
 

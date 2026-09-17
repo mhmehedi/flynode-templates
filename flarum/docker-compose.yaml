@@ -7,6 +7,8 @@ services:
       DB_NAME: 'flarum'
       DB_USER: 'flarum'
       DB_PASS: '${FLARUM_DB_PASSWORD}'
+    expose:
+      - '8888'
     volumes:
       - flarum-assets:/flarum/app/public/assets
 

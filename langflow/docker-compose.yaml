@@ -3,6 +3,8 @@ services:
     image: 'langflowai/langflow:latest'
     environment:
       LANGFLOW_SECRET_KEY: '${LANGFLOW_SECRET_KEY}'
+    expose:
+      - '7860'
     volumes:
       - langflow-data:/app/langflow
 

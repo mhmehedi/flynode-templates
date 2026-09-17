@@ -8,6 +8,8 @@ services:
       DATABASE_USERNAME: 'huginn'
       DATABASE_PASSWORD: '${HUGINN_DB_PASSWORD}'
       APP_SECRET_TOKEN: '${HUGINN_APP_SECRET_TOKEN}'
+    expose:
+      - '3000'
     volumes:
       - huginn-data:/var/lib/huginn
 

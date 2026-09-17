@@ -3,6 +3,8 @@ services:
     image: 'typemill/typemill:latest'
     environment:
       {}
+    expose:
+      - '80'
     volumes:
       - typemill-system:/var/www/html/system
       - typemill-media:/var/www/html/media

@@ -3,6 +3,8 @@ services:
     image: 'nodered/node-red:latest'
     environment:
       {}
+    expose:
+      - '1880'
     volumes:
       - node-red-data:/data
 
