@@ -3,6 +3,7 @@ services:
     image: 'lscr.io/linuxserver/bookstack:latest'
     environment:
       APP_URL: '${BOOKSTACK_URL}'
+      APP_KEY: '${BOOKSTACK_APP_KEY}'
       DB_HOST: 'db'
       DB_DATABASE: 'bookstack'
       DB_USERNAME: 'bookstack'
