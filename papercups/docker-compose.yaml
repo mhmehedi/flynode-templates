@@ -4,6 +4,7 @@ services:
     environment:
       DATABASE_URL: 'postgresql://papercups:${PAPERCUPS_DB_PASSWORD}@db:5432/papercups'
       SECRET_KEY_BASE: '${PAPERCUPS_SECRET_KEY_BASE}'
+      BACKEND_URL: '${PAPERCUPS_BACKEND_HOST}'
     expose:
       - '4000'
 
@@ -21,7 +22,7 @@ services:
     volumes:
       - papercups-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL","pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+      test: ["CMD-SHELL","pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
       timeout: 5s
       retries: 20

@@ -586,16 +586,17 @@
       },
       "appEnv": {
         "DATABASE_URL": "postgresql://papercups:${PAPERCUPS_DB_PASSWORD}@db:5432/papercups",
-        "SECRET_KEY_BASE": "${PAPERCUPS_SECRET_KEY_BASE}"
+        "SECRET_KEY_BASE": "${PAPERCUPS_SECRET_KEY_BASE}",
+        "BACKEND_URL": "${PAPERCUPS_BACKEND_HOST}"
       },
       "secretEnvKeys": [
         "PAPERCUPS_DB_PASSWORD",
         "PAPERCUPS_SECRET_KEY_BASE"
       ],
-      "urlEnvKey": null,
       "volumes": [],
       "defaultEnv": {},
-      "confidence": "medium"
+      "confidence": "medium",
+      "urlHostEnvKey": "PAPERCUPS_BACKEND_HOST"
     },
     {
       "appName": "Invoice Ninja",

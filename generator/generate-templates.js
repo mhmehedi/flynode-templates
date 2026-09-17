@@ -54,8 +54,21 @@ const DB_IMAGES = {
 // the moment a real customer would have tried to deploy any of them —
 // caught by a real Kutt deploy hanging forever waiting on Postgres to
 // report healthy, not by inspection.
+// $$ (not $) here — docker compose does its own ${VAR} substitution
+// across the ENTIRE compose file text at parse time, using the host/
+// build-time env it was invoked with, before the container ever sees
+// this string. It has no visibility into this same service's own
+// `environment:` block at that point, so a single `$` here resolved to
+// an empty string every time (confirmed via a real Papercups deploy's
+// build warnings: "POSTGRES_USER variable is not set. Defaulting to a
+// blank string.") — harmless for pg_isready specifically (an empty -U
+// still passed enough of a connectivity check to report healthy), but
+// not actually validating the thing this healthcheck claims to check.
+// $$ escapes compose's own substitution, leaving a literal $VAR for the
+// container's own shell (CMD-SHELL runs via /bin/sh -c) to resolve
+// against its real runtime environment instead.
 const DB_HEALTHCHECKS = {
-  postgres: ['CMD-SHELL', 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'],
+  postgres: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"'],
   mariadb: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized'],
   mysql: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost'],
   // Same root-cause fix as postgres above — auth is enabled the moment
@@ -63,7 +76,7 @@ const DB_HEALTHCHECKS = {
   // sets them), so an unauthenticated ping would fail the same way.
   mongo: [
     'CMD-SHELL',
-    'mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand(\'ping\')"',
+    'mongosh --quiet -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "db.adminCommand(\'ping\')"',
   ],
 };
 
