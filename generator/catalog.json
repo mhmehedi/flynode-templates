@@ -595,14 +595,14 @@
       ],
       "volumes": [],
       "defaultEnv": {},
-      "confidence": "medium",
+      "confidence": "verified",
       "urlHostEnvKey": "PAPERCUPS_BACKEND_HOST"
     },
     {
       "appName": "Invoice Ninja",
       "slug": "invoiceninja",
       "category": "crm-support",
-      "dockerImage": "invoiceninja/invoiceninja:latest",
+      "dockerImage": "invoiceninja/invoiceninja-debian:latest",
       "internalPort": 80,
       "requiresDb": true,
       "db": {

@@ -1,6 +1,6 @@
 services:
   invoiceninja:
-    image: 'invoiceninja/invoiceninja:latest'
+    image: 'invoiceninja/invoiceninja-debian:latest'
     environment:
       APP_KEY: '${INVOICENINJA_APP_KEY}'
       DB_HOST: 'db'
