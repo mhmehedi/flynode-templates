@@ -625,12 +625,15 @@
         "DB_USERNAME": "ninja",
         "DB_PASSWORD": "${INVOICENINJA_DB_PASSWORD}",
         "APP_URL": "${INVOICENINJA_URL}",
-        "APP_ENV": "production"
+        "APP_ENV": "production",
+        "IN_USER_EMAIL": "admin@flynode.io",
+        "IN_USER_PASSWORD": "${INVOICENINJA_ADMIN_PASSWORD}"
       },
       "secretEnvKeys": [
         "MYSQL_ROOT_PASSWORD",
         "INVOICENINJA_APP_KEY",
-        "INVOICENINJA_DB_PASSWORD"
+        "INVOICENINJA_DB_PASSWORD",
+        "INVOICENINJA_ADMIN_PASSWORD"
       ],
       "urlEnvKey": "INVOICENINJA_URL",
       "volumes": [
