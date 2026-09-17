@@ -704,16 +704,18 @@
         "LISTMONK_db__host": "db",
         "LISTMONK_db__user": "listmonk",
         "LISTMONK_db__password": "${LISTMONK_DB_PASSWORD}",
-        "LISTMONK_db__database": "listmonk"
+        "LISTMONK_db__database": "listmonk",
+        "LISTMONK_ADMIN_USER": "admin",
+        "LISTMONK_ADMIN_PASSWORD": "${LISTMONK_ADMIN_PASSWORD}"
       },
       "secretEnvKeys": [
-        "LISTMONK_DB_PASSWORD"
+        "LISTMONK_DB_PASSWORD",
+        "LISTMONK_ADMIN_PASSWORD"
       ],
       "urlEnvKey": null,
       "volumes": [],
       "defaultEnv": {},
-      "confidence": "medium",
-      "_note": "Listmonk needs a one-time `--install` run against the DB on first boot \u2014 env vars alone won't create its schema. Needs a startup-command tweak, not just env injection."
+      "confidence": "medium"
     },
     {
       "appName": "SuiteCRM",

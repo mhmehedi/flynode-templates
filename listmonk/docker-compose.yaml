@@ -1,12 +1,20 @@
 services:
   listmonk:
     image: 'listmonk/listmonk:latest'
+    # listmonk doesn't create its own schema on plain startup — the
+    # official compose overrides the entrypoint to install (idempotent,
+    # so safe on every restart) then upgrade then actually run the
+    # server. Confirmed against listmonk's own docker-compose.yml, not
+    # guessed.
+    command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''"]
     environment:
       LISTMONK_app__address: '0.0.0.0:9000'
       LISTMONK_db__host: 'db'
       LISTMONK_db__user: 'listmonk'
       LISTMONK_db__password: '${LISTMONK_DB_PASSWORD}'
       LISTMONK_db__database: 'listmonk'
+      LISTMONK_ADMIN_USER: 'admin'
+      LISTMONK_ADMIN_PASSWORD: '${LISTMONK_ADMIN_PASSWORD}'
     expose:
       - '9000'
 
