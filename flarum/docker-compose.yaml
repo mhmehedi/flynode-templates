@@ -1,0 +1,30 @@
+services:
+  flarum:
+    image: 'mondedie/flarum:latest'
+    environment:
+      FLARUM_URL: '${FLARUM_URL}'
+      DB_HOST: 'db'
+      DB_NAME: 'flarum'
+      DB_USER: 'flarum'
+      DB_PASS: '${FLARUM_DB_PASSWORD}'
+    volumes:
+      - flarum-assets:/flarum/app/public/assets
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'flarum'
+      MYSQL_USER: 'flarum'
+      MYSQL_PASSWORD: '${FLARUM_DB_PASSWORD}'
+    volumes:
+      - flarum-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  flarum-assets:
+  flarum-db-data:

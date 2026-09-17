@@ -1,0 +1,13 @@
+services:
+  shlink:
+    image: 'shlinkio/shlink:latest'
+    environment:
+      DEFAULT_DOMAIN: '${SHLINK_URL_HOST}'
+      IS_HTTPS_ENABLED: 'true'
+    volumes:
+      - shlink-data:/etc/shlink/data
+
+    restart: unless-stopped
+
+volumes:
+  shlink-data:

@@ -1,0 +1,31 @@
+services:
+  huginn:
+    image: 'huginn/huginn:latest'
+    environment:
+      DATABASE_ADAPTER: 'mysql2'
+      DATABASE_HOST: 'db'
+      DATABASE_NAME: 'huginn'
+      DATABASE_USERNAME: 'huginn'
+      DATABASE_PASSWORD: '${HUGINN_DB_PASSWORD}'
+      APP_SECRET_TOKEN: '${HUGINN_APP_SECRET_TOKEN}'
+    volumes:
+      - huginn-data:/var/lib/huginn
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mariadb:11'
+    environment:
+      MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MARIADB_DATABASE: 'huginn'
+      MARIADB_USER: 'huginn'
+      MARIADB_PASSWORD: '${HUGINN_DB_PASSWORD}'
+    volumes:
+      - huginn-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  huginn-data:
+  huginn-db-data:

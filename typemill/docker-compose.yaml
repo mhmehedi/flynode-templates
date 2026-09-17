@@ -1,0 +1,14 @@
+services:
+  typemill:
+    image: 'typemill/typemill:latest'
+    environment:
+      {}
+    volumes:
+      - typemill-system:/var/www/html/system
+      - typemill-media:/var/www/html/media
+
+    restart: unless-stopped
+
+volumes:
+  typemill-system:
+  typemill-media:

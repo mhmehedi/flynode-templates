@@ -1,0 +1,12 @@
+services:
+  node-red:
+    image: 'nodered/node-red:latest'
+    environment:
+      {}
+    volumes:
+      - node-red-data:/data
+
+    restart: unless-stopped
+
+volumes:
+  node-red-data:

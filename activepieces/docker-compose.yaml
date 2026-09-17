@@ -1,0 +1,31 @@
+services:
+  activepieces:
+    image: 'activepieces/activepieces:latest'
+    environment:
+      AP_ENCRYPTION_KEY: '${AP_ENCRYPTION_KEY}'
+      AP_JWT_SECRET: '${AP_JWT_SECRET}'
+      AP_POSTGRES_HOST: 'db'
+      AP_POSTGRES_DATABASE: 'activepieces'
+      AP_POSTGRES_USERNAME: 'activepieces'
+      AP_POSTGRES_PASSWORD: '${AP_DB_PASSWORD}'
+      AP_FRONTEND_URL: '${ACTIVEPIECES_URL}'
+    volumes:
+      - activepieces-cache:/usr/src/app/cache
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'postgres:16-alpine'
+    environment:
+      POSTGRES_DB: 'activepieces'
+      POSTGRES_USER: 'activepieces'
+      POSTGRES_PASSWORD: '${AP_DB_PASSWORD}'
+    volumes:
+      - activepieces-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  activepieces-cache:
+  activepieces-db-data:

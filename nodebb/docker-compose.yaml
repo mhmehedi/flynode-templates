@@ -1,0 +1,29 @@
+services:
+  nodebb:
+    image: 'nodebb/docker:latest'
+    environment:
+      NODEBB_URL: '${NODEBB_URL}'
+      NODEBB_DB: 'mongo'
+      NODEBB_DB_HOST: 'db'
+      NODEBB_DB_NAME: 'nodebb'
+      NODEBB_DB_PASSWORD: '${MONGO_INITDB_ROOT_PASSWORD}'
+      NODEBB_DB_USER: 'root'
+    volumes:
+      - nodebb-data:/usr/src/app/public/uploads
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mongo:7'
+    environment:
+      MONGO_INITDB_ROOT_PASSWORD: '${MONGO_INITDB_ROOT_PASSWORD}'
+      MONGO_INITDB_ROOT_USERNAME: 'nodebb'
+    volumes:
+      - nodebb-db-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  nodebb-data:
+  nodebb-db-data:

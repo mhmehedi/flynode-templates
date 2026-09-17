@@ -1,0 +1,28 @@
+services:
+  listmonk:
+    image: 'listmonk/listmonk:latest'
+    environment:
+      LISTMONK_app__address: '0.0.0.0:9000'
+      LISTMONK_db__host: 'db'
+      LISTMONK_db__user: 'listmonk'
+      LISTMONK_db__password: '${LISTMONK_DB_PASSWORD}'
+      LISTMONK_db__database: 'listmonk'
+    volumes:
+      []
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'postgres:16-alpine'
+    environment:
+      POSTGRES_DB: 'listmonk'
+      POSTGRES_USER: 'listmonk'
+      POSTGRES_PASSWORD: '${LISTMONK_DB_PASSWORD}'
+    volumes:
+      - listmonk-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  listmonk-db-data:

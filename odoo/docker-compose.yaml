@@ -1,0 +1,27 @@
+services:
+  odoo:
+    image: 'odoo:17'
+    environment:
+      HOST: 'db'
+      USER: 'odoo'
+      PASSWORD: '${ODOO_DB_PASSWORD}'
+    volumes:
+      - odoo-data:/var/lib/odoo
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'postgres:16-alpine'
+    environment:
+      POSTGRES_DB: 'postgres'
+      POSTGRES_USER: 'odoo'
+      POSTGRES_PASSWORD: '${ODOO_DB_PASSWORD}'
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  odoo-data:
+  odoo-db-data:

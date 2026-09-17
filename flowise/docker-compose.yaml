@@ -1,0 +1,13 @@
+services:
+  flowise:
+    image: 'flowiseai/flowise:latest'
+    environment:
+      FLOWISE_USERNAME: 'admin'
+      FLOWISE_PASSWORD: '${FLOWISE_PASSWORD}'
+    volumes:
+      - flowise-data:/root/.flowise
+
+    restart: unless-stopped
+
+volumes:
+  flowise-data:

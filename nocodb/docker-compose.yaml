@@ -1,0 +1,26 @@
+services:
+  nocodb:
+    image: 'nocodb/nocodb:latest'
+    environment:
+      NC_DB: 'pg://db:5432?u=nocodb&p=${NOCODB_DB_PASSWORD}&d=nocodb'
+      NC_AUTH_JWT_SECRET: '${NOCODB_JWT_SECRET}'
+    volumes:
+      - nocodb-data:/usr/app/data
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'postgres:16-alpine'
+    environment:
+      POSTGRES_DB: 'nocodb'
+      POSTGRES_USER: 'nocodb'
+      POSTGRES_PASSWORD: '${NOCODB_DB_PASSWORD}'
+    volumes:
+      - nocodb-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  nocodb-data:
+  nocodb-db-data:

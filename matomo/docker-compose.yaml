@@ -1,0 +1,29 @@
+services:
+  matomo:
+    image: 'matomo:latest'
+    environment:
+      MATOMO_DATABASE_HOST: 'db'
+      MATOMO_DATABASE_USERNAME: 'matomo'
+      MATOMO_DATABASE_PASSWORD: '${MATOMO_DB_PASSWORD}'
+      MATOMO_DATABASE_DBNAME: 'matomo'
+    volumes:
+      - matomo-data:/var/www/html
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mariadb:11'
+    environment:
+      MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MARIADB_DATABASE: 'matomo'
+      MARIADB_USER: 'matomo'
+      MARIADB_PASSWORD: '${MATOMO_DB_PASSWORD}'
+    volumes:
+      - matomo-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  matomo-data:
+  matomo-db-data:

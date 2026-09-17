@@ -1,0 +1,30 @@
+services:
+  freescout:
+    image: 'tiredofit/freescout:latest'
+    environment:
+      DB_HOST: 'db'
+      DB_NAME: 'freescout'
+      DB_USER: 'freescout'
+      DB_PASSWORD: '${FREESCOUT_DB_PASSWORD}'
+      APP_KEY: '${FREESCOUT_APP_KEY}'
+    volumes:
+      - freescout-data:/data
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'freescout'
+      MYSQL_USER: 'freescout'
+      MYSQL_PASSWORD: '${FREESCOUT_DB_PASSWORD}'
+    volumes:
+      - freescout-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  freescout-data:
+  freescout-db-data:

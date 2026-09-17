@@ -1,0 +1,29 @@
+services:
+  mautic:
+    image: 'mautic/mautic:latest'
+    environment:
+      MAUTIC_DB_HOST: 'db'
+      MAUTIC_DB_NAME: 'mautic'
+      MAUTIC_DB_USER: 'mautic'
+      MAUTIC_DB_PASSWORD: '${MAUTIC_DB_PASSWORD}'
+    volumes:
+      - mautic-data:/var/www/html
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mariadb:11'
+    environment:
+      MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MARIADB_DATABASE: 'mautic'
+      MARIADB_USER: 'mautic'
+      MARIADB_PASSWORD: '${MAUTIC_DB_PASSWORD}'
+    volumes:
+      - mautic-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  mautic-data:
+  mautic-db-data:

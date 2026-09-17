@@ -1,0 +1,30 @@
+services:
+  fathom:
+    image: 'usefathom/fathom:latest'
+    environment:
+      FATHOM_DATABASE_DRIVER: 'mysql'
+      FATHOM_DATABASE_HOST: 'db'
+      FATHOM_DATABASE_NAME: 'fathom'
+      FATHOM_DATABASE_USER: 'fathom'
+      FATHOM_DATABASE_PASSWORD: '${FATHOM_DB_PASSWORD}'
+      FATHOM_SECRET: '${FATHOM_SECRET}'
+    volumes:
+      []
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'fathom'
+      MYSQL_USER: 'fathom'
+      MYSQL_PASSWORD: '${FATHOM_DB_PASSWORD}'
+    volumes:
+      - fathom-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  fathom-db-data:

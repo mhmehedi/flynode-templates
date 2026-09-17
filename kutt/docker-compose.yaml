@@ -1,0 +1,29 @@
+services:
+  kutt:
+    image: 'kutt/kutt:latest'
+    environment:
+      DB_HOST: 'db'
+      DB_NAME: 'kutt'
+      DB_USER: 'kutt'
+      DB_PASSWORD: '${KUTT_DB_PASSWORD}'
+      JWT_SECRET: '${KUTT_JWT_SECRET}'
+      SITE_NAME: 'Kutt'
+    volumes:
+      []
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'postgres:16-alpine'
+    environment:
+      POSTGRES_DB: 'kutt'
+      POSTGRES_USER: 'kutt'
+      POSTGRES_PASSWORD: '${KUTT_DB_PASSWORD}'
+    volumes:
+      - kutt-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  kutt-db-data:

@@ -1,0 +1,31 @@
+services:
+  craft-cms:
+    image: 'craftcms/craftcms:latest'
+    environment:
+      CRAFT_DB_DRIVER: 'mysql'
+      CRAFT_DB_SERVER: 'db'
+      CRAFT_DB_DATABASE: 'craft'
+      CRAFT_DB_USER: 'craft'
+      CRAFT_DB_PASSWORD: '${CRAFT_DB_PASSWORD}'
+      CRAFT_SECURITY_KEY: '${CRAFT_SECURITY_KEY}'
+    volumes:
+      - craft-storage:/app/storage
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mariadb:11'
+    environment:
+      MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MARIADB_DATABASE: 'craft'
+      MARIADB_USER: 'craft'
+      MARIADB_PASSWORD: '${CRAFT_DB_PASSWORD}'
+    volumes:
+      - craft-cms-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  craft-storage:
+  craft-cms-db-data:

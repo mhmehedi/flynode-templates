@@ -1,0 +1,30 @@
+services:
+  crater:
+    image: 'wrkflow/crater:latest'
+    environment:
+      APP_KEY: '${CRATER_APP_KEY}'
+      DB_HOST: 'db'
+      DB_DATABASE: 'crater'
+      DB_USERNAME: 'crater'
+      DB_PASSWORD: '${CRATER_DB_PASSWORD}'
+    volumes:
+      - crater-storage:/var/www/html/storage
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'crater'
+      MYSQL_USER: 'crater'
+      MYSQL_PASSWORD: '${CRATER_DB_PASSWORD}'
+    volumes:
+      - crater-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  crater-storage:
+  crater-db-data:

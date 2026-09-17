@@ -1,0 +1,31 @@
+services:
+  invoiceninja:
+    image: 'invoiceninja/invoiceninja:latest'
+    environment:
+      APP_KEY: '${INVOICENINJA_APP_KEY}'
+      DB_HOST: 'db'
+      DB_DATABASE: 'ninja'
+      DB_USERNAME: 'ninja'
+      DB_PASSWORD: '${INVOICENINJA_DB_PASSWORD}'
+      APP_URL: '${INVOICENINJA_URL}'
+    volumes:
+      - invoiceninja-data:/var/www/app/storage
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'ninja'
+      MYSQL_USER: 'ninja'
+      MYSQL_PASSWORD: '${INVOICENINJA_DB_PASSWORD}'
+    volumes:
+      - invoiceninja-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  invoiceninja-data:
+  invoiceninja-db-data:

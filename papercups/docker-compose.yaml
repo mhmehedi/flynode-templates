@@ -1,0 +1,25 @@
+services:
+  papercups:
+    image: 'papercups/papercups:latest'
+    environment:
+      DATABASE_URL: 'postgresql://papercups:${PAPERCUPS_DB_PASSWORD}@db:5432/papercups'
+      SECRET_KEY_BASE: '${PAPERCUPS_SECRET_KEY_BASE}'
+    volumes:
+      []
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'postgres:16-alpine'
+    environment:
+      POSTGRES_DB: 'papercups'
+      POSTGRES_USER: 'papercups'
+      POSTGRES_PASSWORD: '${PAPERCUPS_DB_PASSWORD}'
+    volumes:
+      - papercups-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  papercups-db-data:

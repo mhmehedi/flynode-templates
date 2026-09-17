@@ -1,0 +1,13 @@
+services:
+  baserow:
+    image: 'baserow/baserow:latest'
+    environment:
+      BASEROW_PUBLIC_URL: '${BASEROW_URL}'
+      SECRET_KEY: '${BASEROW_SECRET_KEY}'
+    volumes:
+      - baserow-data:/baserow/data
+
+    restart: unless-stopped
+
+volumes:
+  baserow-data:

@@ -1,0 +1,30 @@
+services:
+  bookstack:
+    image: 'lscr.io/linuxserver/bookstack:latest'
+    environment:
+      APP_URL: '${BOOKSTACK_URL}'
+      DB_HOST: 'db'
+      DB_DATABASE: 'bookstack'
+      DB_USERNAME: 'bookstack'
+      DB_PASSWORD: '${BOOKSTACK_DB_PASSWORD}'
+    volumes:
+      - bookstack-data:/config
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mariadb:11'
+    environment:
+      MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MARIADB_DATABASE: 'bookstack'
+      MARIADB_USER: 'bookstack'
+      MARIADB_PASSWORD: '${BOOKSTACK_DB_PASSWORD}'
+    volumes:
+      - bookstack-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  bookstack-data:
+  bookstack-db-data:

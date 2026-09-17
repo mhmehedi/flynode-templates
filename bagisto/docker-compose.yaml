@@ -1,0 +1,30 @@
+services:
+  bagisto:
+    image: 'bagisto/bagisto:latest'
+    environment:
+      APP_KEY: '${BAGISTO_APP_KEY}'
+      DB_HOST: 'db'
+      DB_DATABASE: 'bagisto'
+      DB_USERNAME: 'bagisto'
+      DB_PASSWORD: '${BAGISTO_DB_PASSWORD}'
+    volumes:
+      - bagisto-storage:/var/www/html/storage
+
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: 'mysql:8.0'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: 'bagisto'
+      MYSQL_USER: 'bagisto'
+      MYSQL_PASSWORD: '${BAGISTO_DB_PASSWORD}'
+    volumes:
+      - bagisto-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  bagisto-storage:
+  bagisto-db-data:
