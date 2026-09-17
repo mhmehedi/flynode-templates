@@ -10,8 +10,6 @@ services:
       SITE_NAME: 'Kutt'
     expose:
       - '3000'
-    volumes:
-      []
 
     depends_on:
       - db

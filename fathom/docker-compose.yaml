@@ -10,8 +10,6 @@ services:
       FATHOM_SECRET: '${FATHOM_SECRET}'
     expose:
       - '8080'
-    volumes:
-      []
 
     depends_on:
       - db

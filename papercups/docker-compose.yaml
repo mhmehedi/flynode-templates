@@ -6,8 +6,6 @@ services:
       SECRET_KEY_BASE: '${PAPERCUPS_SECRET_KEY_BASE}'
     expose:
       - '4000'
-    volumes:
-      []
 
     depends_on:
       - db

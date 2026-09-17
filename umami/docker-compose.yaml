@@ -6,8 +6,6 @@ services:
       APP_SECRET: '${UMAMI_APP_SECRET}'
     expose:
       - '3000'
-    volumes:
-      []
 
     depends_on:
       - db

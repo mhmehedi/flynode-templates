@@ -9,8 +9,6 @@ services:
       LISTMONK_db__database: 'listmonk'
     expose:
       - '9000'
-    volumes:
-      []
 
     depends_on:
       - db
