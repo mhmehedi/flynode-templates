@@ -717,13 +717,13 @@
       "urlEnvKey": null,
       "volumes": [],
       "defaultEnv": {},
-      "confidence": "medium"
+      "confidence": "verified"
     },
     {
       "appName": "SuiteCRM",
       "slug": "suitecrm",
       "category": "crm-support",
-      "dockerImage": "bitnami/suitecrm:latest",
+      "dockerImage": "bitnamilegacy/suitecrm:latest",
       "internalPort": 8080,
       "requiresDb": true,
       "db": {

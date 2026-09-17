@@ -1,6 +1,6 @@
 services:
   suitecrm:
-    image: 'bitnami/suitecrm:latest'
+    image: 'bitnamilegacy/suitecrm:latest'
     environment:
       SUITECRM_DATABASE_HOST: 'db'
       SUITECRM_DATABASE_NAME: 'suitecrm'
