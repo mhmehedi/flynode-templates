@@ -2,7 +2,7 @@ services:
   node-red:
     image: 'nodered/node-red:latest'
     environment:
-      {}
+      NODE_RED_CREDENTIAL_SECRET: '${NODE_RED_CREDENTIAL_SECRET}'
     expose:
       - '1880'
     volumes:
