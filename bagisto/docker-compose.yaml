@@ -13,7 +13,8 @@ services:
       - bagisto-storage:/var/www/html/storage
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -25,6 +26,11 @@ services:
       MYSQL_PASSWORD: '${BAGISTO_DB_PASSWORD}'
     volumes:
       - bagisto-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     restart: unless-stopped
 
 volumes:

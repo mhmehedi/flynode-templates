@@ -8,7 +8,8 @@ services:
       - '4000'
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -19,6 +20,11 @@ services:
       POSTGRES_PASSWORD: '${PAPERCUPS_DB_PASSWORD}'
     volumes:
       - papercups-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     restart: unless-stopped
 
 volumes:

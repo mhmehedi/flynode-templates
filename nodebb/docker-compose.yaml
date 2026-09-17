@@ -14,7 +14,8 @@ services:
       - nodebb-data:/usr/src/app/public/uploads
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -24,6 +25,11 @@ services:
       MONGO_INITDB_ROOT_USERNAME: 'nodebb'
     volumes:
       - nodebb-db-data:/data/db
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     restart: unless-stopped
 
 volumes:

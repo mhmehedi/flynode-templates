@@ -3,18 +3,19 @@ services:
     image: 'lscr.io/linuxserver/bookstack:latest'
     environment:
       APP_URL: '${BOOKSTACK_URL}'
-      APP_KEY: '${BOOKSTACK_APP_KEY}'
       DB_HOST: 'db'
       DB_DATABASE: 'bookstack'
       DB_USERNAME: 'bookstack'
       DB_PASSWORD: '${BOOKSTACK_DB_PASSWORD}'
+      APP_KEY: '${BOOKSTACK_APP_KEY}'
     expose:
       - '80'
     volumes:
       - bookstack-data:/config
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -26,6 +27,11 @@ services:
       MARIADB_PASSWORD: '${BOOKSTACK_DB_PASSWORD}'
     volumes:
       - bookstack-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","healthcheck.sh","--connect","--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     restart: unless-stopped
 
 volumes:
