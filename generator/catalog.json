@@ -599,53 +599,6 @@
       "urlHostEnvKey": "PAPERCUPS_BACKEND_HOST"
     },
     {
-      "appName": "Invoice Ninja",
-      "slug": "invoiceninja",
-      "category": "crm-support",
-      "dockerImage": "invoiceninja/invoiceninja-debian:latest",
-      "internalPort": 80,
-      "requiresDb": true,
-      "db": {
-        "engine": "mysql",
-        "databaseName": "ninja",
-        "username": "ninja",
-        "envVarNames": {
-          "rootPassword": "MYSQL_ROOT_PASSWORD",
-          "database": "MYSQL_DATABASE",
-          "user": "MYSQL_USER",
-          "password": "MYSQL_PASSWORD"
-        },
-        "passwordSecret": "INVOICENINJA_DB_PASSWORD",
-        "rootPasswordSecret": "MYSQL_ROOT_PASSWORD"
-      },
-      "appEnv": {
-        "APP_KEY": "${INVOICENINJA_APP_KEY}",
-        "DB_HOST": "db",
-        "DB_DATABASE": "ninja",
-        "DB_USERNAME": "ninja",
-        "DB_PASSWORD": "${INVOICENINJA_DB_PASSWORD}",
-        "APP_URL": "${INVOICENINJA_URL}",
-        "APP_ENV": "production",
-        "IN_USER_EMAIL": "admin@flynode.io",
-        "IN_USER_PASSWORD": "${INVOICENINJA_ADMIN_PASSWORD}"
-      },
-      "secretEnvKeys": [
-        "MYSQL_ROOT_PASSWORD",
-        "INVOICENINJA_APP_KEY",
-        "INVOICENINJA_DB_PASSWORD",
-        "INVOICENINJA_ADMIN_PASSWORD"
-      ],
-      "urlEnvKey": "INVOICENINJA_URL",
-      "volumes": [
-        {
-          "name": "invoiceninja-data",
-          "path": "/var/www/app/storage"
-        }
-      ],
-      "defaultEnv": {},
-      "confidence": "medium"
-    },
-    {
       "appName": "Crater",
       "slug": "crater",
       "category": "crm-support",
