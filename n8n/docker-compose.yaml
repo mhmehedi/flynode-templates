@@ -8,13 +8,16 @@ services:
       DB_POSTGRESDB_USER: 'n8n'
       DB_POSTGRESDB_PASSWORD: '${N8N_DB_PASSWORD}'
       N8N_ENCRYPTION_KEY: '${N8N_ENCRYPTION_KEY}'
-      N8N_WEBHOOK_URL: '${N8N_URL}'
       N8N_EDITOR_BASE_URL: '${N8N_URL}'
+      N8N_WEBHOOK_URL: '${N8N_URL}'
+    expose:
+      - '5678'
     volumes:
       - n8n-data:/home/node/.n8n
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -25,6 +28,11 @@ services:
       POSTGRES_PASSWORD: '${N8N_DB_PASSWORD}'
     volumes:
       - n8n-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
     restart: unless-stopped
 
 volumes:

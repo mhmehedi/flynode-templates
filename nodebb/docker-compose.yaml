@@ -26,7 +26,7 @@ services:
     volumes:
       - nodebb-db-data:/data/db
     healthcheck:
-      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      test: ["CMD-SHELL","mongosh --quiet -u \"$MONGO_INITDB_ROOT_USERNAME\" -p \"$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin --eval \"db.adminCommand('ping')\""]
       interval: 5s
       timeout: 5s
       retries: 20
