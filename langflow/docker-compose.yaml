@@ -3,6 +3,8 @@ services:
     image: 'langflowai/langflow:latest'
     environment:
       LANGFLOW_SECRET_KEY: '${LANGFLOW_SECRET_KEY}'
+      LANGFLOW_SUPERUSER: 'admin'
+      LANGFLOW_SUPERUSER_PASSWORD: '${LANGFLOW_SUPERUSER_PASSWORD}'
     expose:
       - '7860'
     volumes:
