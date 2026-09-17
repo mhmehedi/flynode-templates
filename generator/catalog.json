@@ -624,7 +624,8 @@
         "DB_DATABASE": "ninja",
         "DB_USERNAME": "ninja",
         "DB_PASSWORD": "${INVOICENINJA_DB_PASSWORD}",
-        "APP_URL": "${INVOICENINJA_URL}"
+        "APP_URL": "${INVOICENINJA_URL}",
+        "APP_ENV": "production"
       },
       "secretEnvKeys": [
         "MYSQL_ROOT_PASSWORD",

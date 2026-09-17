@@ -2,6 +2,7 @@ services:
   invoiceninja:
     image: 'invoiceninja/invoiceninja-debian:latest'
     environment:
+      APP_ENV: production
       APP_KEY: '${INVOICENINJA_APP_KEY}'
       DB_HOST: 'db'
       DB_DATABASE: 'ninja'
