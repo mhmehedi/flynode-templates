@@ -1,16 +1,26 @@
 services:
   typemill:
-    image: 'typemill/typemill:latest'
+    image: 'kixote/typemill:latest'
     environment:
-      {}
+      TYPEMILL_PROXY_DETECTION: 'true'
     expose:
       - '80'
     volumes:
-      - typemill-system:/var/www/html/system
+      - typemill-settings:/var/www/html/settings
       - typemill-media:/var/www/html/media
+      - typemill-data:/var/www/html/data
+      - typemill-cache:/var/www/html/cache
+      - typemill-plugins:/var/www/html/plugins
+      - typemill-content:/var/www/html/content
+      - typemill-themes:/var/www/html/themes
 
     restart: unless-stopped
 
 volumes:
-  typemill-system:
+  typemill-settings:
   typemill-media:
+  typemill-data:
+  typemill-cache:
+  typemill-plugins:
+  typemill-content:
+  typemill-themes:

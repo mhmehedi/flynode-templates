@@ -2,11 +2,14 @@ services:
   flarum:
     image: 'mondedie/flarum:latest'
     environment:
-      FLARUM_URL: '${FLARUM_URL}'
+      FORUM_URL: '${FLARUM_URL}'
       DB_HOST: 'db'
       DB_NAME: 'flarum'
       DB_USER: 'flarum'
       DB_PASS: '${FLARUM_DB_PASSWORD}'
+      FLARUM_ADMIN_USER: 'admin'
+      FLARUM_ADMIN_PASS: '${FLARUM_ADMIN_PASSWORD}'
+      FLARUM_ADMIN_MAIL: 'admin@flynode.io'
     expose:
       - '8888'
     volumes:
