@@ -88,6 +88,15 @@ services:
         /bin/filebrowser users add admin "$$FILE_MANAGER_PASSWORD" --lockPassword \
           --perm.admin=false --perm.execute=false --perm.share=false -d /tmp/fb.db
         exec /bin/filebrowser -d /tmp/fb.db
+    # The image's own healthcheck reads /config/settings.json, which this
+    # setup does not use, so it would stay "unhealthy" and Traefik skips
+    # unhealthy containers.
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:80/health']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     # Tells Traefik which port to route to.
     expose:
       - '80'
