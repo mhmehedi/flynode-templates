@@ -11,6 +11,26 @@ services:
     depends_on:
       - mariadb
     restart: unless-stopped
+  # Web file manager on the same volume as WordPress. Runs as www-data
+  # (uid/gid 33, what the wordpress image uses) so anything uploaded here
+  # is owned by, and writable for, WordPress. Its login database lives in
+  # /tmp and is rebuilt from FILEBROWSER_PASSWORD on every start.
+  filebrowser:
+    image: 'filebrowser/filebrowser:latest'
+    user: '33:33'
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        /bin/filebrowser config init -d /tmp/fb.db --root /srv --port 80 --address 0.0.0.0
+        /bin/filebrowser users add admin "$$FILEBROWSER_PASSWORD" --perm.admin -d /tmp/fb.db
+        exec /bin/filebrowser -d /tmp/fb.db
+    environment:
+      FILEBROWSER_PASSWORD: '${FILEBROWSER_PASSWORD}'
+    volumes:
+      - wordpress-files:/srv
+    depends_on:
+      - wordpress
+    restart: unless-stopped
   mariadb:
     image: 'mariadb:11'
     environment:
