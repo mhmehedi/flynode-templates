@@ -100,7 +100,8 @@ services:
         CSS
         /bin/filebrowser config init -d /tmp/fb.db --root /srv --port 80 --address 0.0.0.0 \
           --branding.name "FlyNode Files" --branding.files /tmp/branding --branding.color "#6366f1" \
-          --branding.disableExternal --branding.disableUsedPercentage --hideLoginButton
+          --branding.disableExternal --branding.disableUsedPercentage --hideLoginButton \
+          --fileMode 0o644 --dirMode 0o755
         /bin/filebrowser users add admin "$$FILE_MANAGER_PASSWORD" --lockPassword \
           --perm.admin=false --perm.execute=false --perm.share=false -d /tmp/fb.db
         exec /bin/filebrowser -d /tmp/fb.db
