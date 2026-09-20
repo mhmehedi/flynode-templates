@@ -11,22 +11,90 @@ services:
     depends_on:
       - mariadb
     restart: unless-stopped
-  # Web file manager (dufs) on the same volume as WordPress. Runs as
+  # Web file manager (File Browser) on the same volume as WordPress. Runs as
   # www-data (uid/gid 33, what the wordpress image uses) so anything
-  # uploaded here is owned by, and writable for, WordPress. Login is
-  # `admin` + FILE_MANAGER_PASSWORD; symlinks out of the site folder are
-  # not followed (dufs default).
+  # uploaded here is owned by, and writable for, WordPress.
+  #
+  # Single-tenant by design: one non-admin `admin` login built from
+  # FILE_MANAGER_PASSWORD on every start (its database lives in /tmp), no
+  # user management, no sharing, no command runner, password locked.
+  # Branded FlyNode indigo via custom.css, which follows the system
+  # light/dark setting.
   filemanager:
-    image: 'sigoden/dufs:latest'
+    image: 'filebrowser/filebrowser:v2.63.23'
     user: '33:33'
-    command: ['/data', '--allow-all']
-    # Tells Traefik which port to route to — dufs' image declares none.
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        mkdir -p /tmp/branding
+        cat > /tmp/branding/custom.css <<'CSS'
+        /* FlyNode file manager: indigo brand, follows the system light/dark setting. */
+        :root {
+          --blue: #4f46e5;
+          --dark-blue: #4338ca;
+          --icon-blue: #6366f1;
+          --action: #52525b;
+          --background: #f6f6fb;
+          --surfacePrimary: #ffffff;
+          --surfaceSecondary: #eceafd;
+          --textPrimary: #71717a;
+          --textSecondary: #18181b;
+          --borderPrimary: rgba(24, 24, 27, 0.08);
+          --borderSecondary: rgba(24, 24, 27, 0.14);
+          --divider: rgba(24, 24, 27, 0.06);
+          --hover: rgba(99, 102, 241, 0.08);
+        }
+        :root.dark {
+          --blue: #6366f1;
+          --dark-blue: #4f46e5;
+          --icon-blue: #818cf8;
+          --action: #e4e4e7;
+          --background: #0a0a12;
+          --surfacePrimary: #13131d;
+          --surfaceSecondary: #22223a;
+          --textPrimary: rgba(255, 255, 255, 0.55);
+          --textSecondary: rgba(255, 255, 255, 0.92);
+          --borderPrimary: rgba(255, 255, 255, 0.07);
+          --borderSecondary: rgba(255, 255, 255, 0.14);
+          --divider: rgba(255, 255, 255, 0.08);
+          --hover: rgba(129, 140, 248, 0.14);
+        }
+        @media (prefers-color-scheme: dark) {
+          :root:not(.light) {
+            --blue: #6366f1;
+            --dark-blue: #4f46e5;
+            --icon-blue: #818cf8;
+            --action: #e4e4e7;
+            --background: #0a0a12;
+            --surfacePrimary: #13131d;
+            --surfaceSecondary: #22223a;
+            --textPrimary: rgba(255, 255, 255, 0.55);
+            --textSecondary: rgba(255, 255, 255, 0.92);
+            --borderPrimary: rgba(255, 255, 255, 0.07);
+            --borderSecondary: rgba(255, 255, 255, 0.14);
+            --divider: rgba(255, 255, 255, 0.08);
+            --hover: rgba(129, 140, 248, 0.14);
+          }
+        }
+        body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+        .button { border-radius: 10px; }
+        #listing .item { border-radius: 10px; }
+        #login form { border-radius: 18px; box-shadow: 0 10px 40px rgba(79, 70, 229, 0.15); }
+        #login input { border-radius: 10px; }
+        CSS
+        /bin/filebrowser config init -d /tmp/fb.db --root /srv --port 80 --address 0.0.0.0 \
+          --branding.name "FlyNode Files" --branding.files /tmp/branding --branding.color "#6366f1" \
+          --branding.disableExternal --branding.disableUsedPercentage --hideLoginButton
+        /bin/filebrowser users add admin "$$FILE_MANAGER_PASSWORD" --lockPassword \
+          --perm.admin=false --perm.execute=false --perm.share=false -d /tmp/fb.db
+        exec /bin/filebrowser -d /tmp/fb.db
+    # Tells Traefik which port to route to.
     expose:
-      - '5000'
+      - '80'
     environment:
-      DUFS_AUTH: 'admin:${FILE_MANAGER_PASSWORD}@/:rw'
+      FILE_MANAGER_PASSWORD: '${FILE_MANAGER_PASSWORD}'
     volumes:
-      - wordpress-files:/data
+      - wordpress-files:/srv
     depends_on:
       - wordpress
     restart: unless-stopped
