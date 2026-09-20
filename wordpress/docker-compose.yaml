@@ -20,6 +20,9 @@ services:
     image: 'sigoden/dufs:latest'
     user: '33:33'
     command: ['/data', '--allow-all']
+    # Tells Traefik which port to route to — dufs' image declares none.
+    expose:
+      - '5000'
     environment:
       DUFS_AUTH: 'admin:${FILE_MANAGER_PASSWORD}@/:rw'
     volumes:
