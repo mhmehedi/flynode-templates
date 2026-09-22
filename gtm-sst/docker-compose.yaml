@@ -1,0 +1,9 @@
+services:
+  gtm-sst:
+    image: 'gcr.io/cloud-tagging-10302018/gtm-cloud-image:stable'
+    environment:
+      CONTAINER_CONFIG: '${CONTAINER_CONFIG}'
+      PORT: '8080'
+    expose:
+      - '8080'
+    restart: unless-stopped
