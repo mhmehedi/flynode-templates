@@ -1,5 +1,6 @@
 services:
   huginn:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'huginn/huginn:latest'
     environment:
       DATABASE_ADAPTER: 'mysql2'
@@ -19,6 +20,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
     environment:
       MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'

@@ -1,5 +1,6 @@
 services:
   baserow:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'baserow/baserow:latest'
     environment:
       BASEROW_PUBLIC_URL: '${BASEROW_URL}'

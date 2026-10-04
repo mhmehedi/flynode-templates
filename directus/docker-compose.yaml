@@ -1,5 +1,6 @@
 services:
   directus:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'directus/directus:latest'
     environment:
       KEY: '${DIRECTUS_KEY}'
@@ -24,6 +25,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'postgres:16-alpine'
     environment:
       POSTGRES_DB: 'directus'

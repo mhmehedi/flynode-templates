@@ -1,5 +1,6 @@
 services:
   uptime-kuma:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'louislam/uptime-kuma:1'
     volumes:
       - uptime-kuma-data:/app/data

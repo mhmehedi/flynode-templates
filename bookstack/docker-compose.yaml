@@ -1,5 +1,6 @@
 services:
   bookstack:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'lscr.io/linuxserver/bookstack:latest'
     environment:
       APP_URL: '${BOOKSTACK_URL}'
@@ -19,6 +20,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
     environment:
       MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'

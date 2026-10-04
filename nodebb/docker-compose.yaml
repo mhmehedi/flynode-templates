@@ -1,5 +1,6 @@
 services:
   nodebb:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'nodebb/docker:latest'
     environment:
       NODEBB_URL: '${NODEBB_URL}'
@@ -19,6 +20,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mongo:7'
     environment:
       MONGO_INITDB_ROOT_PASSWORD: '${MONGO_INITDB_ROOT_PASSWORD}'

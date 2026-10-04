@@ -1,5 +1,6 @@
 services:
   langflow:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'langflowai/langflow:latest'
     environment:
       LANGFLOW_SECRET_KEY: '${LANGFLOW_SECRET_KEY}'

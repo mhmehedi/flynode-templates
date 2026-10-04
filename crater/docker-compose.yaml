@@ -1,5 +1,6 @@
 services:
   crater:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'wrkflow/crater:latest'
     environment:
       APP_KEY: '${CRATER_APP_KEY}'
@@ -18,6 +19,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mysql:8.0'
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'

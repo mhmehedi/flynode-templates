@@ -1,5 +1,6 @@
 services:
   pocketbase:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'ghcr.io/muchobien/pocketbase:latest'
     environment:
       {}

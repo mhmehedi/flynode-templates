@@ -1,5 +1,6 @@
 services:
   ghost:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'ghost:5-alpine'
     environment:
       database__client: mysql
@@ -14,6 +15,7 @@ services:
       - mysql
     restart: unless-stopped
   mysql:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mysql:8.0'
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'

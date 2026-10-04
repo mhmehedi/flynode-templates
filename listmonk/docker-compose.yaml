@@ -1,5 +1,6 @@
 services:
   listmonk:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'listmonk/listmonk:latest'
     # listmonk doesn't create its own schema on plain startup — the
     # official compose overrides the entrypoint to install (idempotent,
@@ -26,6 +27,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'postgres:16-alpine'
     environment:
       POSTGRES_DB: 'listmonk'

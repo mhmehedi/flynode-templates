@@ -1,5 +1,6 @@
 services:
   wordpress:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'wordpress:latest'
     environment:
       WORDPRESS_DB_HOST: mariadb
@@ -21,6 +22,7 @@ services:
   # Branded FlyNode indigo via custom.css, which follows the system
   # light/dark setting.
   filemanager:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'filebrowser/filebrowser:v2.63.23'
     user: '33:33'
     entrypoint: ['/bin/sh', '-c']
@@ -125,6 +127,7 @@ services:
       - wordpress
     restart: unless-stopped
   mariadb:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
     environment:
       MYSQL_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'

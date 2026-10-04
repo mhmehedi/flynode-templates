@@ -23,6 +23,11 @@
 const fs = require('fs');
 const path = require('path');
 
+// Every service joins the customer's shared RAM/CPU slice when flynode-api sets FN_CGROUP_PARENT at deploy time;
+// unset, the value is system.slice, Docker's own default parent with the systemd cgroup driver (no change).
+// add-cgroup-parent.js adds the same line to the hand-authored templates.
+const CGROUP_LINE = "cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'";
+
 const DB_DATA_PATHS = {
   postgres: '/var/lib/postgresql/data',
   mariadb: '/var/lib/mysql',
@@ -135,7 +140,7 @@ function generateCompose(app) {
     const { image, env, dataPath, volumeName } = buildDbService(app);
     const healthTest = DB_HEALTHCHECKS[app.db.engine];
     dependsOn = `\n    depends_on:\n      db:\n        condition: service_healthy`;
-    dbSection = `\n  db:\n    image: '${image}'\n    environment:\n${yamlEnvBlock(env, 6)}\n    volumes:\n      - ${volumeName}:${dataPath}\n    healthcheck:\n      test: ${JSON.stringify(healthTest)}\n      interval: 5s\n      timeout: 5s\n      retries: 20\n    restart: unless-stopped\n`;
+    dbSection = `\n  db:\n    ${CGROUP_LINE}\n    image: '${image}'\n    environment:\n${yamlEnvBlock(env, 6)}\n    volumes:\n      - ${volumeName}:${dataPath}\n    healthcheck:\n      test: ${JSON.stringify(healthTest)}\n      interval: 5s\n      timeout: 5s\n      retries: 20\n    restart: unless-stopped\n`;
     volumeDecls.push(`  ${volumeName}:`);
   }
 
@@ -148,6 +153,7 @@ function generateCompose(app) {
   const lines = [
     'services:',
     `  ${app.slug}:`,
+    `    ${CGROUP_LINE}`,
     `    image: '${app.dockerImage}'`,
     '    environment:',
     yamlEnvBlock(appEnv, 6),

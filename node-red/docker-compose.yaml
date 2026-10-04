@@ -1,5 +1,6 @@
 services:
   node-red:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'nodered/node-red:latest'
     environment:
       {}

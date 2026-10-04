@@ -1,5 +1,6 @@
 services:
   mautic:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mautic/mautic:latest'
     environment:
       MAUTIC_DB_HOST: 'db'
@@ -17,6 +18,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
     environment:
       MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'

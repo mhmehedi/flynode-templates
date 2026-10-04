@@ -1,5 +1,6 @@
 services:
   kutt:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'kutt/kutt:latest'
     environment:
       DB_HOST: 'db'
@@ -17,6 +18,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'postgres:16-alpine'
     environment:
       POSTGRES_DB: 'kutt'

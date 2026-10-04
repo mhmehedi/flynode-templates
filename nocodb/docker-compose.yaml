@@ -1,5 +1,6 @@
 services:
   nocodb:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'nocodb/nocodb:latest'
     environment:
       NC_DB: 'pg://db:5432?u=nocodb&p=${NOCODB_DB_PASSWORD}&d=nocodb'
@@ -15,6 +16,7 @@ services:
     restart: unless-stopped
 
   db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'postgres:16-alpine'
     environment:
       POSTGRES_DB: 'nocodb'

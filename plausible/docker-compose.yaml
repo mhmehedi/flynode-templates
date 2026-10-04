@@ -1,5 +1,6 @@
 services:
   plausible_db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'postgres:16-alpine'
     restart: unless-stopped
     volumes:
@@ -11,6 +12,7 @@ services:
       start_period: 1m
 
   plausible_events_db:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'clickhouse/clickhouse-server:24.12-alpine'
     restart: unless-stopped
     volumes:
@@ -31,6 +33,7 @@ services:
       start_period: 1m
 
   plausible:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'ghcr.io/plausible/community-edition:v3.2.1'
     restart: unless-stopped
     command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"

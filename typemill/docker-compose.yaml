@@ -1,5 +1,6 @@
 services:
   typemill:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'kixote/typemill:latest'
     environment:
       TYPEMILL_PROXY_DETECTION: 'true'
