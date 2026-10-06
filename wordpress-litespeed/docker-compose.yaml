@@ -1,0 +1,224 @@
+services:
+  wordpress:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
+    image: 'litespeedtech/openlitespeed:1.8.2-lsphp83'
+    entrypoint: ['/bin/bash', '-c']
+    command:
+      - |
+        DOCROOT="/var/www/vhosts/localhost/html"
+        mkdir -p "$$DOCROOT"
+
+        if [ ! -f "$$DOCROOT/wp-config.php" ]; then
+          echo "[FlyNode] Initializing WordPress with OpenLiteSpeed and Redis..."
+          if [ ! -f "$$DOCROOT/wp-settings.php" ]; then
+            echo "[FlyNode] Downloading WordPress core..."
+            curl -sSL "https://wordpress.org/latest.tar.gz" | tar -xz -C "$$DOCROOT" --strip-components=1
+          fi
+
+          if [ ! -d "$$DOCROOT/wp-content/plugins/litespeed-cache" ]; then
+            echo "[FlyNode] Installing LiteSpeed Cache plugin..."
+            mkdir -p "$$DOCROOT/wp-content/plugins"
+            curl -sSL -o /tmp/lscache.zip "https://downloads.wordpress.org/plugin/litespeed-cache.latest-stable.zip"
+            php -r '$$z = new ZipArchive(); if ($$z->open("/tmp/lscache.zip") === TRUE) { $$z->extractTo("'"$$DOCROOT"'/wp-content/plugins/"); $$z->close(); }'
+            rm -f /tmp/lscache.zip
+          fi
+
+          SALTS=$$(curl -sSL https://api.wordpress.org/secret-key/1.1/salt/ || echo "define('AUTH_KEY', 'flynode_$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 48)');")
+
+          cat > "$$DOCROOT/wp-config.php" <<EOF
+        <?php
+        define('DB_NAME', 'wordpress');
+        define('DB_USER', 'wordpress');
+        define('DB_PASSWORD', '${WORDPRESS_DB_PASSWORD}');
+        define('DB_HOST', 'mariadb');
+        define('DB_CHARSET', 'utf8mb4');
+        define('DB_COLLATE', '');
+
+        // Redis Object Cache Settings
+        define('WP_REDIS_HOST', 'redis');
+        define('WP_REDIS_PORT', 6379);
+        define('WP_REDIS_TIMEOUT', 1);
+        define('WP_REDIS_READ_TIMEOUT', 1);
+
+        // Security Salts
+        $${SALTS}
+
+        \$table_prefix = 'wp_';
+
+        define('WP_DEBUG', false);
+
+        if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            \$_SERVER['HTTPS'] = 'on';
+        }
+
+        if (!defined('ABSPATH')) {
+            define('ABSPATH', __DIR__ . '/');
+        }
+
+        require_once ABSPATH . 'wp-settings.php';
+        EOF
+
+          cat > "$$DOCROOT/.htaccess" <<'EOF'
+        # BEGIN LSCACHE
+        ## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
+        <IfModule LiteSpeed>
+        RewriteEngine on
+        CacheLookup on
+        RewriteRule .* - [E=Cache-Control:no-autoflush]
+        RewriteRule \.litespeed_conf\.dat - [F,L]
+        </IfModule>
+        ## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
+        # END LSCACHE
+
+        # BEGIN WordPress
+        <IfModule mod_rewrite.c>
+        RewriteEngine On
+        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+        RewriteBase /
+        RewriteRule ^index\.php$ - [L]
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule . /index.php [L]
+        </IfModule>
+        # END WordPress
+        EOF
+
+          chown -R 65534:65534 "$$DOCROOT"
+          chmod -R 755 "$$DOCROOT"
+          echo "[FlyNode] WordPress setup completed successfully."
+        fi
+
+        chown -R 65534:65534 "$$DOCROOT"
+        exec /entrypoint.sh
+    expose:
+      - '80'
+    volumes:
+      - wordpress-files:/var/www/vhosts/localhost/html
+    depends_on:
+      - mariadb
+      - redis
+    restart: unless-stopped
+
+  filemanager:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
+    image: 'filebrowser/filebrowser:v2.63.23'
+    user: '65534:65534'
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        mkdir -p /tmp/branding/img
+        cat > /tmp/branding/img/logo.svg <<'SVG'
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#g)"/><path d="M14 22a4 4 0 0 1 4-4h9l5 6h14a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z" fill="#fff"/></svg>
+        SVG
+        cat > /tmp/branding/custom.css <<'CSS'
+        /* FlyNode file manager: indigo brand, follows the system light/dark setting. */
+        :root {
+          --blue: #4f46e5;
+          --dark-blue: #4338ca;
+          --icon-blue: #6366f1;
+          --action: #52525b;
+          --background: #f6f6fb;
+          --surfacePrimary: #ffffff;
+          --surfaceSecondary: #eceafd;
+          --textPrimary: #71717a;
+          --textSecondary: #18181b;
+          --borderPrimary: rgba(24, 24, 27, 0.08);
+          --borderSecondary: rgba(24, 24, 27, 0.14);
+          --divider: rgba(24, 24, 27, 0.06);
+          --hover: rgba(99, 102, 241, 0.08);
+        }
+        :root.dark {
+          --blue: #6366f1;
+          --dark-blue: #4f46e5;
+          --icon-blue: #818cf8;
+          --action: #e4e4e7;
+          --background: #0a0a12;
+          --surfacePrimary: #13131d;
+          --surfaceSecondary: #22223a;
+          --textPrimary: rgba(255, 255, 255, 0.55);
+          --textSecondary: rgba(255, 255, 255, 0.92);
+          --borderPrimary: rgba(255, 255, 255, 0.07);
+          --borderSecondary: rgba(255, 255, 255, 0.14);
+          --divider: rgba(255, 255, 255, 0.08);
+          --hover: rgba(129, 140, 248, 0.14);
+        }
+        @media (prefers-color-scheme: dark) {
+          :root:not(.light) {
+            --blue: #6366f1;
+            --dark-blue: #4f46e5;
+            --icon-blue: #818cf8;
+            --action: #e4e4e7;
+            --background: #0a0a12;
+            --surfacePrimary: #13131d;
+            --surfaceSecondary: #22223a;
+            --textPrimary: rgba(255, 255, 255, 0.55);
+            --textSecondary: rgba(255, 255, 255, 0.92);
+            --borderPrimary: rgba(255, 255, 255, 0.07);
+            --borderSecondary: rgba(255, 255, 255, 0.14);
+            --divider: rgba(255, 255, 255, 0.08);
+            --hover: rgba(129, 140, 248, 0.14);
+          }
+        }
+        body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+        .button { border-radius: 10px; }
+        #listing .item { border-radius: 10px; }
+        header img { border-radius: 10px; }
+        .credits { display: none; }
+        #login { background: linear-gradient(180deg, var(--background), var(--surfaceSecondary)); }
+        #login form {
+          width: 22rem;
+          max-width: 92vw;
+          padding: 2rem 1.75rem 1.75rem;
+          border-radius: 20px;
+          background: var(--surfacePrimary);
+          box-shadow: 0 20px 50px rgba(79, 70, 229, 0.18);
+        }
+        #login img { width: 4rem; height: 4rem; margin-bottom: 0.25rem; }
+        #login h1 { margin: 0.5rem 0 1.25rem; font-size: 1.5rem; font-weight: 650; color: var(--textSecondary); }
+        #login input { border-radius: 10px; margin-bottom: 0.75rem; padding: 0.7rem 0.9rem; }
+        #login input.button { margin-bottom: 0; }
+        CSS
+        /bin/filebrowser config init -d /tmp/fb.db --root /srv --port 80 --address 0.0.0.0 \
+          --branding.name "FlyNode Files" --branding.files /tmp/branding --branding.color "#6366f1" \
+          --branding.disableExternal --branding.disableUsedPercentage --hideLoginButton \
+          --fileMode 0o644 --dirMode 0o755
+        /bin/filebrowser users add admin "$$FILE_MANAGER_PASSWORD" --lockPassword \
+          --perm.admin=false --perm.execute=false --perm.share=false -d /tmp/fb.db
+        exec /bin/filebrowser -d /tmp/fb.db
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://localhost:80/health']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    expose:
+      - '80'
+    environment:
+      FILE_MANAGER_PASSWORD: '${FILE_MANAGER_PASSWORD}'
+    volumes:
+      - wordpress-files:/srv
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+
+  mariadb:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
+    image: 'mariadb:11'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: '${WORDPRESS_DB_PASSWORD}'
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    restart: unless-stopped
+
+  redis:
+    cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
+    image: 'redis:alpine'
+    command: ['redis-server', '--appendonly', 'no', '--save', '']
+    restart: unless-stopped
+
+volumes:
+  wordpress-files:
+  mariadb-data:
