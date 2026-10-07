@@ -47,6 +47,11 @@ services:
 
         define('WP_DEBUG', false);
 
+        if (isset(\$$_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            \$$ips = explode(',', \$$_SERVER['HTTP_X_FORWARDED_FOR']);
+            \$$_SERVER['REMOTE_ADDR'] = trim(\$$ips[0]);
+        }
+
         if (isset(\$$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
             \$$_SERVER['HTTPS'] = 'on';
         }
@@ -86,6 +91,11 @@ services:
           chown -R 65534:65534 "$$DOCROOT"
           chmod -R 755 "$$DOCROOT"
           echo "[FlyNode] WordPress setup completed successfully."
+        fi
+
+        # Ensure OpenLiteSpeed trusts reverse proxy client IP headers (required for QUIC.cloud and security)
+        if [ -f /usr/local/lsws/conf/httpd_config.conf ]; then
+          grep -q "useIpInProxyHeader" /usr/local/lsws/conf/httpd_config.conf || sed -i '/disableWebAdmin/a useIpInProxyHeader 1' /usr/local/lsws/conf/httpd_config.conf
         fi
 
         chown -R 65534:65534 "$$DOCROOT"
