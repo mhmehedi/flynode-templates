@@ -214,6 +214,8 @@ services:
   mariadb:
     cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
+    # Sized from the plan by FlyNode (FN_DB_BUFFER_MB); 128 is MariaDB's own default when it is not set.
+    command: ['--innodb-buffer-pool-size=${FN_DB_BUFFER_MB:-128}M']
     environment:
       MYSQL_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
       MYSQL_DATABASE: wordpress
@@ -226,7 +228,8 @@ services:
   redis:
     cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'redis:alpine'
-    command: ['redis-server', '--appendonly', 'no', '--save', '']
+    # Capped from the plan by FlyNode (FN_REDIS_MB); the least recently used keys go first when it is full.
+    command: ['redis-server', '--appendonly', 'no', '--save', '', '--maxmemory', '${FN_REDIS_MB:-64}mb', '--maxmemory-policy', 'allkeys-lru']
     restart: unless-stopped
 
 volumes:
