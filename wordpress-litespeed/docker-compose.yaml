@@ -88,6 +88,34 @@ services:
         # END WordPress
         EOF
 
+          # A new site gets LiteSpeed Cache switched on by a small must-use plugin, because WordPress is not installed yet at this point
+          # (the customer runs the installer later). It activates the plugin once, then leaves it alone; a site that already runs another
+          # page-cache plugin is skipped. Only new sites get this file: it is written inside the first-start block.
+          mkdir -p "$$DOCROOT/wp-content/mu-plugins"
+          cat > "$$DOCROOT/wp-content/mu-plugins/flynode-lscache.php" <<'PHPEOF'
+        <?php
+        /* FlyNode: switches LiteSpeed Cache on once for a new site. */
+        add_action('init', function () {
+            if (!function_exists('is_blog_installed') || !is_blog_installed()) return;
+            if (get_option('flynode_lscache_done')) return;
+            if (!function_exists('activate_plugin') || !function_exists('is_plugin_active')) {
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+            $$file = 'litespeed-cache/litespeed-cache.php';
+            if (!file_exists(WP_PLUGIN_DIR . '/' . $$file)) return;
+            $$others = array(
+                'wp-rocket/wp-rocket.php', 'w3-total-cache/w3-total-cache.php', 'wp-super-cache/wp-cache.php',
+                'wp-fastest-cache/wpFastestCache.php', 'cache-enabler/cache-enabler.php', 'sg-cachepress/sg-cachepress.php',
+                'comet-cache/comet-cache.php', 'hummingbird-performance/wp-hummingbird.php',
+            );
+            foreach ($$others as $$other) {
+                if (is_plugin_active($$other)) { update_option('flynode_lscache_done', 'skipped'); return; }
+            }
+            if (!is_plugin_active($$file)) activate_plugin($$file);
+            update_option('flynode_lscache_done', '1');
+        }, 20);
+        PHPEOF
+
           chown -R 65534:65534 "$$DOCROOT"
           chmod -R 755 "$$DOCROOT"
           echo "[FlyNode] WordPress setup completed successfully."
