@@ -1,7 +1,7 @@
 services:
   wordpress:
     cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
-    image: 'litespeedtech/openlitespeed:1.9.0-lsphp83'
+    image: 'litespeedtech/openlitespeed:1.9.0-lsphp84'
     entrypoint: ['/bin/bash', '-c']
     command:
       - |
