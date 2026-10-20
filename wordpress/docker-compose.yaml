@@ -129,6 +129,8 @@ services:
   mariadb:
     cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
+    # Sized by FlyNode from the site's own data (FN_DB_BUFFER_MB; 128 is MariaDB's own default when it is not set); the rest keep an idle database lean.
+    command: ['--innodb-buffer-pool-size=${FN_DB_BUFFER_MB:-128}M', '--aria-pagecache-buffer-size=8M', '--key-buffer-size=8M', '--thread-cache-size=8', '--max-connections=60', '--table-open-cache=400', '--innodb-log-buffer-size=4M']
     environment:
       MYSQL_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
       MYSQL_DATABASE: wordpress

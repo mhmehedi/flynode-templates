@@ -242,8 +242,9 @@ services:
   mariadb:
     cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
-    # Sized from the plan by FlyNode (FN_DB_BUFFER_MB); 128 is MariaDB's own default when it is not set.
-    command: ['--innodb-buffer-pool-size=${FN_DB_BUFFER_MB:-128}M']
+    # Sized by FlyNode from the site's own data (FN_DB_BUFFER_MB; 128 is the fallback for an app FlyNode has not sized yet). MariaDB reserves its
+    # whole buffer pool at start, so the rest of these are small values that keep an idle WordPress database from holding memory it never uses.
+    command: ['--innodb-buffer-pool-size=${FN_DB_BUFFER_MB:-128}M', '--aria-pagecache-buffer-size=8M', '--key-buffer-size=8M', '--thread-cache-size=8', '--max-connections=60', '--table-open-cache=400', '--innodb-log-buffer-size=4M']
     environment:
       MYSQL_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
       MYSQL_DATABASE: wordpress
