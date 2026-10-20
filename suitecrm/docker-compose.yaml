@@ -22,6 +22,8 @@ services:
   db:
     cgroup_parent: '${FN_CGROUP_PARENT:-system.slice}'
     image: 'mariadb:11'
+    # Lean start-up settings (FlyNode): the stock defaults are sized for a big server and hold hundreds of MB for a small app.
+    command: ['--innodb-buffer-pool-size=128M', '--aria-pagecache-buffer-size=8M', '--innodb-log-buffer-size=4M', '--max-connections=60', '--table-open-cache=400', '--table-definition-cache=400', '--thread-cache-size=8', '--key-buffer-size=8M', '--tmp-table-size=16M', '--max-heap-table-size=16M']
     environment:
       MARIADB_ROOT_PASSWORD: '${MARIADB_ROOT_PASSWORD}'
       MARIADB_DATABASE: 'suitecrm'
