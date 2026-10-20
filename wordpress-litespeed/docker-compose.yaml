@@ -126,8 +126,8 @@ services:
           grep -q "useIpInProxyHeader" /usr/local/lsws/conf/httpd_config.conf || sed -i '/disableWebAdmin/a useIpInProxyHeader 1' /usr/local/lsws/conf/httpd_config.conf
         fi
 
-        # PHP workers (measured on a WooCommerce + Elementor test site, see PLAN-wordpress-memory.md). OpenLiteSpeed starts one web worker per host CPU
-        # core (8 here), each holding its own persistent connections to the PHP handler; with only 10 PHP workers those connections take them all and
+        # PHP workers (measured on a WooCommerce + Elementor test site, see PLAN-wordpress-memory.md). OpenLiteSpeed starts 8 web workers (a fixed default,
+        # the same with 2, 6 or 10 CPUs visible), each holding its own persistent connections to the PHP handler; with only 10 PHP workers those connections take them all and
         # requests stop being delivered ("possible dead lock", 503). One web worker removes that and about 70 MB. PHP workers idle for 30 s exit and
         # give their memory back, a worker is replaced after 500 requests (they grow), and the count follows the plan (FN_PHP_CHILDREN).
         LSCONF=/usr/local/lsws/conf/httpd_config.conf
