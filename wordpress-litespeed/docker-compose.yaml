@@ -126,6 +126,18 @@ services:
           grep -q "useIpInProxyHeader" /usr/local/lsws/conf/httpd_config.conf || sed -i '/disableWebAdmin/a useIpInProxyHeader 1' /usr/local/lsws/conf/httpd_config.conf
         fi
 
+        # PHP workers (measured on a WooCommerce + Elementor test site, see PLAN-wordpress-memory.md). OpenLiteSpeed starts one web worker per host CPU
+        # core (8 here), each holding its own persistent connections to the PHP handler; with only 10 PHP workers those connections take them all and
+        # requests stop being delivered ("possible dead lock", 503). One web worker removes that and about 70 MB. PHP workers idle for 30 s exit and
+        # give their memory back, a worker is replaced after 500 requests (they grow), and the count follows the plan (FN_PHP_CHILDREN).
+        LSCONF=/usr/local/lsws/conf/httpd_config.conf
+        if [ -f "$$LSCONF" ]; then
+          grep -q '^httpdWorkers' "$$LSCONF" || sed -i '/^serverName/a httpdWorkers 1' "$$LSCONF"
+          sed -i 's/PHP_LSAPI_CHILDREN=[0-9]*/PHP_LSAPI_CHILDREN=${FN_PHP_CHILDREN:-10}/' "$$LSCONF"
+          grep -q 'LSAPI_MAX_REQS' "$$LSCONF" || sed -i -e '/^extProcessor lsphp/,/^}/{' -e '/maxConns/a\    env                             LSAPI_MAX_REQS=500' -e '}' "$$LSCONF"
+          grep -q 'LSAPI_MAX_IDLE=30' "$$LSCONF" || sed -i -e '/^extProcessor lsphp/,/^}/{' -e '/maxConns/a\    env                             LSAPI_MAX_IDLE=30' -e '}' "$$LSCONF"
+        fi
+
         chown -R 65534:65534 "$$DOCROOT"
         exec /entrypoint.sh
     expose:
